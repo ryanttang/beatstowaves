@@ -171,9 +171,9 @@ const App: React.FC = () => {
           <UploadPanel />
         </div>
         {/* Visualizer screen with knobs right, buttons left */}
-        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px] ml-12">
+        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px]">
           {/* Effect buttons left */}
-          <div className="flex flex-col gap-2 items-center justify-start pt-1" style={{ maxHeight: '1350px' }}>
+          <div className="flex flex-col gap-2 items-center justify-center w-[160px] pt-1" style={{ maxHeight: '1350px' }}>
             <ButtonSVG src="/knobs/button-orange.svg" label="NOISE" width={140} height={48} />
             <ButtonSVG src="/knobs/button-yellow.svg" label="WOBBLE" width={140} height={48} />
             <ButtonSVG src="/knobs/button-lime.svg" label="DISTORT" width={140} height={48} />
