@@ -210,16 +210,20 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
       <div
-        className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl border-4 border-rc20-beige shadow-2xl"
+        className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl border-4 border-rc20-beige shadow-2xl relative"
         style={{
           background: 'rgba(35, 37, 58, 0.85)', // semi-glassy navy
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
         }}
       >
+        {/* VizWiz logo in top-left corner */}
+        <div style={{ position: 'absolute', top: 20, left: 28, fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: 28, fontWeight: 700, letterSpacing: 4, color: '#fff', textShadow: '0 2px 8px #23253a88', padding: '4px 12px' }}>
+          VizWiz
+        </div>
         {/* Top bar */}
         <header className="flex flex-col md:flex-row items-center justify-between mb-1 w-full gap-2 max-w-[400px]">
-          <div className="text-2xl font-bold tracking-widest text-rc20-navy drop-shadow-lg">RC-20 AUDIO VISUALIZER</div>
+          <div className="text-3xl font-bold tracking-widest text-rc20-navy drop-shadow-lg" style={{ fontFamily: 'Bitcount Prop Double, ui-sans-serif, system-ui, sans-serif' }}>VizWiz</div>
           <div className="text-xs text-rc20-navy opacity-60">Inspired by XLN Audio</div>
         </header>
         {/* UploadPanel - now above visualizer */}
