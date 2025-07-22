@@ -34,6 +34,27 @@ const THEME_PRESETS: {
     background: '#f3f3f3', // light gray/white
     backgroundAnimation: 'none',
   },
+  'RC-20': {
+    color: '#e07a3f', // warm orange accent
+    colorGradient: ['#e07a3f', '#e6c15c'], // orange to yellow (main panel colors)
+    colorPalette: 'warm',
+    background: '#e6dcc3', // cream/beige background
+    backgroundAnimation: 'none',
+  },
+  'Serum': {
+    color: '#3cf2ff', // neon cyan accent
+    colorGradient: ['#1a2633', '#3cf2ff'], // deep blue to neon cyan
+    colorPalette: 'cool',
+    background: '#1a2633', // deep blue background
+    backgroundAnimation: 'none',
+  },
+  'Valhalla': {
+    color: '#a46cff', // bright purple accent
+    colorGradient: ['#4be1f6', '#a46cff'], // blue to purple
+    colorPalette: 'cool',
+    background: '#10102a', // deep blue/black background
+    backgroundAnimation: 'none',
+  },
 };
 
 const SeedDisplay = () => {
@@ -121,6 +142,54 @@ const App: React.FC = () => {
   const [audioReactiveSize, setAudioReactiveSize] = useState(false);
   const [audioBand, setAudioBand] = useState<'bass' | 'mid' | 'treble'>('bass'); // 'bass', 'mid', 'treble'
 
+  // Best defaults for each visual mode
+  const MODE_DEFAULTS: Record<string, Partial<{
+    noise: number;
+    wobble: number;
+    distort: number;
+    digital: number;
+    space: number;
+    magnetic: number;
+    color: string;
+    colorGradient: string[];
+    colorPalette: string;
+    colorAnimated: boolean;
+    size: number;
+    sizeX: number;
+    sizeY: number;
+    sizeZ: number;
+    sizeAudioReactive: boolean;
+    shape: string;
+    shapeMorph: number;
+    count: number;
+    countAuto: boolean;
+    lights: any[];
+    shadows: boolean;
+    background: string;
+    backgroundAnimation: string;
+  }> > = {
+    classic:    { noise: 0.05, wobble: 0.05, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#4a90e2', count: 32, size: 1, shape: 'box', colorPalette: 'default', colorGradient: ['#4a90e2', '#e07a3f'] },
+    bars:       { noise: 0.05, wobble: 0.05, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#e07a3f', count: 32, size: 1, shape: 'box', colorPalette: 'warm', colorGradient: ['#e07a3f', '#e6c15c'] },
+    spiral:     { noise: 0.1, wobble: 0.1, distort: 0.05, digital: 0, space: 0.1, magnetic: 0, color: '#e07a3f', count: 32, size: 1, shape: 'box', colorPalette: 'warm', colorGradient: ['#e07a3f', '#e6c15c'] },
+    waves:      { noise: 0.05, wobble: 0.15, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#4a90e2', count: 32, size: 1, shape: 'box', colorPalette: 'default', colorGradient: ['#4a90e2', '#e07a3f'] },
+    particles:  { noise: 0.15, wobble: 0.1, distort: 0.05, digital: 0, space: 0.2, magnetic: 0, color: '#3bb6b0', count: 24, size: 1, shape: 'box', colorPalette: 'cool', colorGradient: ['#4a90e2', '#3bb6b0'] },
+    radial:     { noise: 0.05, wobble: 0.05, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#e07a3f', count: 32, size: 1, shape: 'box', colorPalette: 'warm', colorGradient: ['#e07a3f', '#e6c15c'] },
+    sphere:     { noise: 0.05, wobble: 0.05, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#4a90e2', count: 16, size: 1, shape: 'box', colorPalette: 'default', colorGradient: ['#4a90e2', '#e07a3f'] },
+    tunnel:     { noise: 0.05, wobble: 0.1, distort: 0.05, digital: 0, space: 0.1, magnetic: 0, color: '#3cf2ff', count: 16, size: 1, shape: 'box', colorPalette: 'cool', colorGradient: ['#1a2633', '#3cf2ff'] },
+    grid:       { noise: 0.05, wobble: 0.05, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#4a90e2', count: 27, size: 0.8, shape: 'box', colorPalette: 'default', colorGradient: ['#4a90e2', '#e07a3f'] },
+    ribbon:     { noise: 0.05, wobble: 0.15, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#e07a3f', count: 32, size: 1, shape: 'box', colorPalette: 'warm', colorGradient: ['#e07a3f', '#e6c15c'] },
+    galaxy:     { noise: 0.2, wobble: 0.1, distort: 0.05, digital: 0, space: 0.2, magnetic: 0, color: '#3cf2ff', count: 16, size: 1, shape: 'box', colorPalette: 'cool', colorGradient: ['#1a2633', '#3cf2ff'] },
+    blob:       { noise: 0.05, wobble: 0.05, distort: 0.1, digital: 0, space: 0, magnetic: 0, color: '#a46cff', count: 16, size: 1, shape: 'sphere', colorPalette: 'cool', colorGradient: ['#4be1f6', '#a46cff'] },
+    dna:        { noise: 0.05, wobble: 0.1, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#e07a3f', count: 16, size: 1, shape: 'sphere', colorPalette: 'warm', colorGradient: ['#e07a3f', '#e6c15c'] },
+    liquid:     { noise: 0.1, wobble: 0.1, distort: 0.05, digital: 0, space: 0.1, magnetic: 0, color: '#3bb6b0', count: 8, size: 1, shape: 'sphere', colorPalette: 'cool', colorGradient: ['#4a90e2', '#3bb6b0'] },
+    orbitals:   { noise: 0.05, wobble: 0.1, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#e07a3f', count: 8, size: 1, shape: 'sphere', colorPalette: 'warm', colorGradient: ['#e07a3f', '#e6c15c'] },
+    fractal:    { noise: 0.05, wobble: 0.1, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#4a90e2', count: 8, size: 1, shape: 'box', colorPalette: 'default', colorGradient: ['#4a90e2', '#e07a3f'] },
+    polygon:    { noise: 0.05, wobble: 0.1, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#e07a3f', count: 6, size: 1, shape: 'box', colorPalette: 'warm', colorGradient: ['#e07a3f', '#e6c15c'] },
+    wavegrid:   { noise: 0.05, wobble: 0.1, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#3cf2ff', count: 24, size: 1, shape: 'box', colorPalette: 'cool', colorGradient: ['#1a2633', '#3cf2ff'] },
+    textdeform: { noise: 0.05, wobble: 0.1, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#4a90e2', count: 8, size: 1, shape: 'box', colorPalette: 'default', colorGradient: ['#4a90e2', '#e07a3f'] },
+    aurora:     { noise: 0.05, wobble: 0.15, distort: 0.05, digital: 0, space: 0, magnetic: 0, color: '#a46cff', count: 8, size: 1, shape: 'box', colorPalette: 'cool', colorGradient: ['#4be1f6', '#a46cff'] },
+  };
+
   // Propagate knob values to VisualizerEngine
   useEffect(() => {
     if (engineRef.current && typeof engineRef.current.setEffects === 'function') {
@@ -161,6 +230,26 @@ const App: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme]);
+
+  // Set best defaults for each mode when mode changes
+  useEffect(() => {
+    const defaults = MODE_DEFAULTS[visualMode];
+    if (defaults) {
+      if (typeof defaults.noise === 'number') setNoise(defaults.noise);
+      if (typeof defaults.wobble === 'number') setWobble(defaults.wobble);
+      if (typeof defaults.distort === 'number') setDistort(defaults.distort);
+      if (typeof defaults.digital === 'number') setDigital(defaults.digital);
+      if (typeof defaults.space === 'number') setSpace(defaults.space);
+      if (typeof defaults.magnetic === 'number') setMagnetic(defaults.magnetic);
+      if (typeof defaults.color === 'string') setColor(defaults.color);
+      if (Array.isArray(defaults.colorGradient)) setColorGradient(defaults.colorGradient);
+      if (typeof defaults.colorPalette === 'string') setColorPalette(defaults.colorPalette);
+      if (typeof defaults.size === 'number') setSize(defaults.size);
+      if (typeof defaults.count === 'number') setCount(defaults.count);
+      if (typeof defaults.shape === 'string') setShape(defaults.shape);
+      // Add more as needed
+    }
+  }, [visualMode]);
 
   // Helper to check if the visualizer div has a non-zero size
   const isVisualizerReady = useCallback(() => {
@@ -263,6 +352,19 @@ const App: React.FC = () => {
   }
   const panelTextColor = isColorLight(themeStyles.background) ? '#23253a' : '#fff';
 
+  // Randomize seed and all knob values
+  function randomizeAll() {
+    // Helper for random float in [0, 1]
+    const rand = () => Math.random();
+    setSeed(Math.random().toString(36).slice(2, 18));
+    setNoise(rand());
+    setWobble(rand());
+    setDistort(rand());
+    setDigital(rand());
+    setSpace(rand());
+    setMagnetic(rand());
+  }
+
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
       <div
@@ -286,6 +388,9 @@ const App: React.FC = () => {
           >
             <option value="Default">Default Theme</option>
             <option value="OP-1">OP-1 Theme</option>
+            <option value="RC-20">RC-20 Theme</option>
+            <option value="Serum">Serum Theme</option>
+            <option value="Valhalla">Valhalla Theme</option>
           </select>
         </div>
         {/* VizWiz logo in top-left corner */}
@@ -293,7 +398,7 @@ const App: React.FC = () => {
           VizWiz
         </div>
         <div className="text-xs opacity-60" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', color: themeStyles.color, marginTop: 4 }}>
-          Created by Ryan Tang
+          Created by <a href="https://ryantang.site" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: themeStyles.color }}>Ryan Tang</a>
         </div>
         {/* UploadPanel - now above visualizer */}
         <div className="w-full max-w-[400px] mb-1 flex justify-center">
@@ -439,22 +544,22 @@ const App: React.FC = () => {
           {editingOption === 'background' && (
             <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
               <label className="block mb-2 text-white">Background Color</label>
-              <input type="color" value={background} onChange={e => setBackground(e.target.value)} />
+              <input type="color" value={typeof background === 'string' ? background : '#23253a'} onChange={e => setBackground(e.target.value)} />
               <div className="mt-4">
                 <label className="block text-white mb-1">Background Image</label>
                 <input type="file" accept="image/*" onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) {
                     const reader = new FileReader();
-                    reader.onload = ev => setBackgroundImage(ev.target?.result as string);
+                    reader.onload = ev => setBackgroundImage(ev.target?.result ? String(ev.target.result) : '');
                     reader.readAsDataURL(file);
                   }
                 }} />
-                {backgroundImage && <img src={backgroundImage} alt="bg" className="mt-2 max-w-xs max-h-32 rounded" />}
+                {backgroundImage && <img src={typeof backgroundImage === 'string' ? backgroundImage : ''} alt="bg" className="mt-2 max-w-xs max-h-32 rounded" />}
               </div>
               <div className="mt-4">
                 <label className="block text-white mb-1">Background Animation</label>
-                <select value={backgroundAnimation} onChange={e => setBackgroundAnimation(e.target.value)} className="bg-gray-800 text-white rounded p-2">
+                <select value={typeof backgroundAnimation === 'string' ? backgroundAnimation : 'none'} onChange={e => setBackgroundAnimation(e.target.value)} className="bg-gray-800 text-white rounded p-2">
                   <option value="none">None</option>
                   <option value="gradient">Animated Gradient</option>
                   <option value="video">Video Background</option>
@@ -468,8 +573,8 @@ const App: React.FC = () => {
             <div
               ref={visualizerRef}
               id="visualizer-canvas"
-              className="bg-rc20-navy/80 rounded-xl border-4 border-rc20-beige shadow-2xl flex items-center justify-center"
-              style={{ aspectRatio: '1080 / 1350', width: '100%', maxWidth: '400px', height: 'auto' }}
+              className="bg-rc20-navy/80 rounded-xl border-4 shadow-2xl flex items-center justify-center"
+              style={{ aspectRatio: '1080 / 1350', width: '100%', maxWidth: '400px', height: 'auto', borderColor: themeStyles.color }}
               aria-label="Visualizer display"
               role="region"
             ></div>
@@ -495,12 +600,12 @@ const App: React.FC = () => {
               className="grid grid-cols-2 gap-y-6 gap-x-6 items-center mt-0"
               style={{ maxHeight: '1350px' }}
             >
-              <Knob value={noise} onChange={setNoise} label="NOISE" color="#e07a3f" />
-              <Knob value={wobble} onChange={setWobble} label="WOBBLE" color="#e6c15c" />
-              <Knob value={distort} onChange={setDistort} label="DISTORT" color="#4bbf8b" />
-              <Knob value={digital} onChange={setDigital} label="DIGITAL" color="#3bb6b0" />
-              <Knob value={space} onChange={setSpace} label="SPACE" color="#4a90e2" />
-              <Knob value={magnetic} onChange={setMagnetic} label="MAGNETIC" color="#23253a" />
+              <Knob value={typeof noise === 'number' ? noise : 0.5} onChange={setNoise} label="NOISE" color="#e07a3f" theme={theme} />
+              <Knob value={typeof wobble === 'number' ? wobble : 0.5} onChange={setWobble} label="WOBBLE" color="#e6c15c" theme={theme} />
+              <Knob value={typeof distort === 'number' ? distort : 0.5} onChange={setDistort} label="DISTORT" color="#4bbf8b" theme={theme} />
+              <Knob value={typeof digital === 'number' ? digital : 0.5} onChange={setDigital} label="DIGITAL" color="#3bb6b0" theme={theme} />
+              <Knob value={typeof space === 'number' ? space : 0.5} onChange={setSpace} label="SPACE" color="#4a90e2" theme={theme} />
+              <Knob value={typeof magnetic === 'number' ? magnetic : 0.5} onChange={setMagnetic} label="MAGNETIC" color="#23253a" theme={theme} />
             </div>
             <div className="w-full max-w-[280px] min-w-[220px] flex justify-center">
               <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg border text-base shadow-lg items-stretch"
@@ -508,7 +613,7 @@ const App: React.FC = () => {
                 <VisualizerControls />
                 <div className="flex flex-row gap-1 w-full justify-end">
                   <div style={{ width: '100%' }}>
-                    <RandomizeSeedButton />
+                    <RandomizeSeedButton onRandomize={randomizeAll} />
                   </div>
                 </div>
               </section>

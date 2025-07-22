@@ -7,11 +7,12 @@ interface KnobProps {
   label?: string;
   color?: string; // CSS color (not used in SVG, but kept for API)
   size?: number; // px (scales SVG)
+  theme?: string;
 }
 
 const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
 
-const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64 }) => {
+const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64, theme }) => {
   const [dragging, setDragging] = useState(false);
   const knobRef = useRef<HTMLDivElement>(null);
   const [focus, setFocus] = useState(false);
@@ -100,7 +101,12 @@ const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64 })
         />
       </div>
       {label && (
-        <div className="text-base tracking-widest mt-0.5 select-none font-semibold" style={{ color: '#23253a', letterSpacing: 2 }}>{label}</div>
+        <div
+          className="text-base tracking-widest mt-0.5 select-none font-semibold"
+          style={{ color: (theme === 'Valhalla' || theme === 'Default' || theme === 'Serum') ? '#fff' : theme === 'OP-1' ? '#23253a' : '#23253a', letterSpacing: 2 }}
+        >
+          {label}
+        </div>
       )}
     </div>
   );

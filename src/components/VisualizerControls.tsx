@@ -28,12 +28,11 @@ function randomSeed() {
   return Math.random().toString(36).slice(2, 18);
 }
 
-export const RandomizeSeedButton: React.FC = () => {
-  const setSeed = useAppStore(s => s.setSeed);
+export const RandomizeSeedButton: React.FC<{ onRandomize?: () => void }> = ({ onRandomize }) => {
   return (
     <button
       className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 w-full md:w-auto"
-      onClick={() => setSeed(randomSeed())}
+      onClick={onRandomize}
       style={{ color: '#fff' }}
     >
       Randomize Seed
