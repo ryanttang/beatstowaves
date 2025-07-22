@@ -373,10 +373,9 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
       <div
-        className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl border-4 border-rc20-beige shadow-2xl relative"
+        className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl shadow-2xl relative"
         style={{
           background: themeStyles.background,
-          borderColor: themeStyles.color,
           color: themeStyles.color,
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
@@ -402,11 +401,8 @@ const App: React.FC = () => {
         <div style={{ position: 'absolute', top: 10, left: 10, fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: 28, fontWeight: 700, letterSpacing: 4, color: themeStyles.color, textShadow: '0 2px 8px #23253a88', padding: '2px 12px' }}>
           VizWiz
         </div>
-        <div className="text-xs opacity-60" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', color: themeStyles.color, marginTop: 24, marginBottom: 16 }}>
-          Created by <a href="https://ryantang.site" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: themeStyles.color }}>Ryan Tang</a>
-        </div>
         {/* Visualizer screen with knobs right, buttons left */}
-        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px]">
+        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px]" style={{ marginTop: 72 }}>
           {/* Left column: UploadPanel above editing option buttons, bottom button aligned with visualizer bottom */}
           <div className="flex flex-col justify-between items-center w-[160px] h-full" style={{ maxHeight: '1350px' }}>
             {/* Top: UploadPanel */}
@@ -417,12 +413,12 @@ const App: React.FC = () => {
             <div className="flex-1" />
             {/* Bottom: Editing option buttons */}
             <div className="flex flex-col gap-4 items-center justify-end w-full mb-2">
-              <ButtonSVG src="/knobs/button-orange.svg" label="COLOR" width={140} height={48} onClick={() => setEditingOption('color')} />
-              <ButtonSVG src="/knobs/button-yellow.svg" label="SIZE" width={140} height={48} onClick={() => setEditingOption('size')} />
-              <ButtonSVG src="/knobs/button-lime.svg" label="SHAPE" width={140} height={48} onClick={() => setEditingOption('shape')} />
-              <ButtonSVG src="/knobs/button-lightblue.svg" label="COUNT" width={140} height={48} onClick={() => setEditingOption('count')} />
-              <ButtonSVG src="/knobs/button-blue.svg" label="LIGHTING" width={140} height={48} onClick={() => setEditingOption('lighting')} />
-              <ButtonSVG src="/knobs/button-purple.svg" label="BACKGROUND" width={140} height={48} onClick={() => setEditingOption('background')} />
+              <ButtonSVG src="/knobs/button-orange.svg" label="COLOR" width="140" height="48" onClick={() => setEditingOption('color')} />
+              <ButtonSVG src="/knobs/button-yellow.svg" label="SIZE" width="140" height="48" onClick={() => setEditingOption('size')} />
+              <ButtonSVG src="/knobs/button-lime.svg" label="SHAPE" width="140" height="48" onClick={() => setEditingOption('shape')} />
+              <ButtonSVG src="/knobs/button-lightblue.svg" label="COUNT" width="140" height="48" onClick={() => setEditingOption('count')} />
+              <ButtonSVG src="/knobs/button-blue.svg" label="LIGHTING" width="140" height="48" onClick={() => setEditingOption('lighting')} />
+              <ButtonSVG src="/knobs/button-purple.svg" label="BACKGROUND" width="140" height="48" onClick={() => setEditingOption('background')} />
             </div>
           </div>
           {/* Editing option popovers */}
@@ -600,10 +596,10 @@ const App: React.FC = () => {
             {/* Footer controls (SVG black buttons) in a single row, minimal gap */}
             <div className="w-full flex justify-center items-center mt-2">
               <div className="flex flex-row gap-2 w-full max-w-[400px] justify-center mx-auto">
-                <ButtonSVG src="/knobs/black-button.svg" label="LOAD" width={90} height={36} />
-                <ButtonSVG src="/knobs/black-button.svg" label="SAVE" width={90} height={36} />
-                <ButtonSVG src="/knobs/black-button.svg" label="PRESET" width={90} height={36} />
-                <ButtonSVG src="/knobs/black-button.svg" label="EXPORT" width={90} height={36} onClick={handleExportClick} />
+                <ButtonSVG src="/knobs/black-button.svg" label="LOAD" width="90" height="36" />
+                <ButtonSVG src="/knobs/black-button.svg" label="SAVE" width="90" height="36" />
+                <ButtonSVG src="/knobs/black-button.svg" label="PRESET" width="90" height="36" />
+                <ButtonSVG src="/knobs/black-button.svg" label="EXPORT" width="90" height="36" onClick={handleExportClick} />
               </div>
             </div>
           </div>
@@ -621,14 +617,9 @@ const App: React.FC = () => {
               <Knob value={typeof magnetic === 'number' ? magnetic : 0.5} onChange={setMagnetic} label="MAGNETIC" color="#23253a" theme={theme} />
             </div>
             <div className="w-full max-w-[280px] min-w-[220px] flex justify-center">
-              <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg border text-base shadow-lg items-stretch"
-                style={{ minWidth: 0, background: themeStyles.background, color: panelTextColor, borderColor: themeStyles.color }}>
-                <VisualizerControls />
-                <div className="flex flex-row gap-1 w-full justify-end">
-                  <div style={{ width: '100%' }}>
-                    <RandomizeSeedButton onRandomize={randomizeAll} />
-                  </div>
-                </div>
+              <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg text-base shadow-lg items-stretch"
+                style={{ minWidth: 0, background: themeStyles.background, color: panelTextColor }}>
+                <VisualizerControls background={themeStyles.background} color={panelTextColor} theme={theme} />
               </section>
             </div>
           </div>

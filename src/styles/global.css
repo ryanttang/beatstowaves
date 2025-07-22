@@ -12,11 +12,7 @@
   border-radius: 4px;
 }
 
-/* Focus states */
-:focus {
-  outline: 2px solid #38bdf8;
-  outline-offset: 2px;
-}
+/* :focus outline removed to prevent blue border */
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
@@ -32,7 +28,14 @@ body {
 .rc20-panel {
   background: linear-gradient(180deg, #e6dcc3 0%, #d2c3a3 100%);
   border-radius: 18px;
-  box-shadow: 0 4px 24px 0 rgba(35,37,58,0.12), 0 1.5px 0 #b8b2a3 inset;
+  /* Even thicker, chunkier 3D box-shadow for maximum effect */
+  box-shadow:
+    0 20px 64px 0 rgba(35,37,58,0.32), /* much deeper main shadow */
+    0 6px 32px 0 rgba(30,41,59,0.22),  /* extra depth shadow */
+    0 4px 0 #b8b2a3 inset,             /* stronger inner highlight */
+    0 3px 16px 0 rgba(255,255,255,0.13) inset, /* brighter inner glow */
+    0 1.5px 0 #fff,                    /* top highlight */
+    0 32px 96px 0 rgba(30,41,59,0.22); /* extra, extra depth */
   /* Subtle noise overlay */
   position: relative;
 }

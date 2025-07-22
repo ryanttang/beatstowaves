@@ -75,12 +75,12 @@ const KnobSVG: React.FC<KnobSVGProps> = ({ size = 64, className = '', needleAngl
 interface ButtonSVGProps {
   src: string; // Path to SVG file
   label: string;
-  width?: number;
-  height?: number;
+  width?: string;
+  height?: string;
   onClick?: () => void;
 }
 
-const ButtonSVG: React.FC<ButtonSVGProps> = ({ src, label, width = 180, height = 54, onClick }) => (
+const ButtonSVG: React.FC<ButtonSVGProps> = ({ src, label, width = '180', height = '54', onClick }) => (
   <div
     style={{ position: 'relative', width: `${width}px`, height: `${height}px`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: onClick ? 'pointer' : undefined }}
     onClick={onClick}

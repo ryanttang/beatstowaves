@@ -54,7 +54,7 @@ const UploadPanel: React.FC = () => {
         onChange={handleFileChange}
       />
       <div className="text-lg">{fileName ? 'Track Loaded' : 'Load Track'}</div>
-      <div className="mt-1 text-xs text-[9px] italic text-blue-300 whitespace-nowrap">Click or drag audio file here</div>
+      <div className="mt-1 text-[8px] italic text-blue-300 whitespace-nowrap" style={{ fontSize: '8px' }}>Click or drag audio file here</div>
       {/* Only show file name if not loaded (fileName is null) */}
       {/* {fileName && <div className="mt-2 text-green-400">{fileName}</div>} */}
       {error && <div className="mt-2 text-red-400">{error}</div>}

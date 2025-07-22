@@ -28,33 +28,68 @@ function randomSeed() {
   return Math.random().toString(36).slice(2, 18);
 }
 
-export const RandomizeSeedButton: React.FC<{ onRandomize?: () => void }> = ({ onRandomize }) => {
+export const RandomizeSeedButton: React.FC<{ onRandomize?: () => void; theme?: string }> = ({ onRandomize, theme }) => {
+  // Invert for Default, Serum, Valhalla
+  const invert = theme === 'Default' || theme === 'Serum' || theme === 'Valhalla';
+  const bg = invert ? '#fff' : '#23253a';
+  const fg = invert ? '#23253a' : '#fff';
   return (
     <button
-      className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 w-full md:w-auto"
+      className="px-4 py-2 rounded-xl w-full md:w-auto font-semibold focus:outline-none transition-shadow"
       onClick={onRandomize}
-      style={{ color: '#fff' }}
+      style={{
+        background: bg,
+        color: fg,
+        boxShadow: `
+          4px 4px 12px 0 rgba(30, 41, 59, 0.18),
+          -4px -4px 12px 0 rgba(255,255,255,0.08),
+          0 1.5px 8px 0 rgba(0,0,0,0.10),
+          inset 0 2px 8px 0 rgba(255,255,255,0.02)
+        `,
+        transition: 'box-shadow 0.2s',
+      }}
     >
       Randomize Seed
     </button>
   );
 };
 
-const VisualizerControls: React.FC = () => {
+interface VisualizerControlsProps {
+  background?: string;
+  color?: string;
+  theme?: string;
+}
+
+const VisualizerControls: React.FC<VisualizerControlsProps> = ({ background = '#f3f4f6', color = '#23253a', theme }) => {
   const visualMode = useAppStore(s => s.visualMode);
   const setVisualMode = useAppStore(s => s.setVisualMode);
   const intensity = useAppStore(s => s.intensity);
   const setIntensity = useAppStore(s => s.setIntensity);
 
   return (
-    <div className="space-y-4 mt-4">
+    <div
+      className="space-y-4 mt-4 p-4 rounded-2xl"
+      style={{
+        background,
+        color,
+        boxShadow: `
+           4px 4px 12px 0 rgba(180, 190, 200, 0.10),
+           -4px -4px 12px 0 rgba(255,255,255,0.12),
+           0 1.5px 4px 0 rgba(80,80,120,0.04),
+           inset 0 2px 4px 0 rgba(0,0,0,0.01)
+         `,
+        transition: 'box-shadow 0.2s',
+        outline: 'none',
+        border: 'none',
+      }}
+    >
       <div>
-        <label className="block text-sm mb-1">Visual Mode</label>
+        <label className="block text-sm mb-1" style={{ color }}>Visual Mode</label>
         <select
-          className="w-full bg-gray-800 border border-gray-600 rounded p-2"
+          className="w-full rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
+          style={theme === 'Default' ? { background: '#23253a', color: '#fff' } : { background: '#e5e7eb', color }}
           value={visualMode}
           onChange={e => setVisualMode(e.target.value as VisualMode)}
-          style={{ color: '#fff' }}
         >
           {modes.map(m => (
             <option key={m.value} value={m.value}>{m.label}</option>
@@ -62,7 +97,7 @@ const VisualizerControls: React.FC = () => {
         </select>
       </div>
       <div>
-        <label className="block text-sm mb-1">Intensity</label>
+        <label className="block text-sm mb-1" style={{ color }}>Intensity</label>
         <input
           type="range"
           min={0.1}
@@ -70,9 +105,14 @@ const VisualizerControls: React.FC = () => {
           step={0.01}
           value={intensity}
           onChange={e => setIntensity(Number(e.target.value))}
-          className="w-full"
+          className="w-full accent-blue-400"
         />
-        <div className="text-xs text-gray-400">{intensity.toFixed(2)}</div>
+        <div className="text-xs" style={{ color: '#888' }}>{intensity.toFixed(2)}</div>
+      </div>
+      <div className="flex justify-center mt-4">
+        <div className="w-full md:w-auto">
+          <RandomizeSeedButton theme={theme} />
+        </div>
       </div>
     </div>
   );
