@@ -389,27 +389,39 @@ const App: React.FC = () => {
         onClick={() => setShowInfoRow(v => !v)}
         style={{
           position: 'fixed',
-          top: 18,
-          left: 18,
-          zIndex: 1010,
+          top: '18px',
+          left: '18px',
+          zIndex: '1010',
           background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
           border: '2.5px solid #38bdf8',
-          borderRadius: 10,
-          width: 38,
-          height: 38,
+          borderRadius: '10px',
+          width: '44px',
+          height: '44px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 22,
+          fontSize: '26px',
           color: '#38bdf8',
-          fontWeight: 900,
+          fontWeight: '900',
           cursor: 'pointer',
-          boxShadow: '0 2px 8px #23253a33',
+          boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
+          textShadow: '0 1px 0 #23253a, 0 0px 8px #38bdf888',
           outline: 'none',
+          transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
         }}
         aria-label="Toggle info menu"
+        onMouseOver={e => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #38bdf8 60%, #23253a 100%)';
+          (e.currentTarget as HTMLButtonElement).style.color = '#23253a';
+          (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 0 #10121a, 0 4px 16px #38bdf866, 0 2px 0 #fff, 0 1px 0 #38bdf8, inset 0 2px 12px #38bdf822';
+        }}
+        onMouseOut={e => {
+          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #23253a 70%, #181a24 100%)';
+          (e.currentTarget as HTMLButtonElement).style.color = '#38bdf8';
+          (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822';
+        }}
       >
-        &#9776;
+        <span style={{ display: 'block', lineHeight: 1 }}>&#9776;</span>
       </button>
       {/* Info buttons row, toggled by menu icon */}
       {showInfoRow && (
@@ -418,45 +430,45 @@ const App: React.FC = () => {
             background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
             color: '#38bdf8',
             border: '2.5px solid #38bdf8',
-            borderRadius: 8,
+            borderRadius: '8px',
             padding: '7px 18px',
-            fontSize: 13,
-            fontWeight: 700,
+            fontSize: '13px',
+            fontWeight: '700',
             fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
             cursor: 'pointer',
             boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
             textShadow: '0 1px 0 #23253a, 0 0px 8px #38bdf888',
-            letterSpacing: 1.2,
+            letterSpacing: '1.2px',
             transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
           }}>What is VizWiz?</button>
           <button onClick={() => setModal('howto')} style={{
             background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
             color: '#e07a3f',
             border: '2.5px solid #e07a3f',
-            borderRadius: 8,
+            borderRadius: '8px',
             padding: '7px 18px',
-            fontSize: 13,
-            fontWeight: 700,
+            fontSize: '13px',
+            fontWeight: '700',
             fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
             cursor: 'pointer',
             boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #e07a3f, inset 0 2px 8px #e07a3f22',
             textShadow: '0 1px 0 #23253a, 0 0px 8px #e07a3f88',
-            letterSpacing: 1.2,
+            letterSpacing: '1.2px',
             transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
           }}>How to Use</button>
           <button onClick={() => setModal('faq')} style={{
             background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
             color: '#a46cff',
             border: '2.5px solid #a46cff',
-            borderRadius: 8,
+            borderRadius: '8px',
             padding: '7px 18px',
-            fontSize: 13,
-            fontWeight: 700,
+            fontSize: '13px',
+            fontWeight: '700',
             fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
             cursor: 'pointer',
             boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #a46cff, inset 0 2px 8px #a46cff22',
             textShadow: '0 1px 0 #23253a, 0 0px 8px #a46cff88',
-            letterSpacing: 1.2,
+            letterSpacing: '1.2px',
             transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
           }}>FAQ</button>
         </div>
@@ -465,12 +477,12 @@ const App: React.FC = () => {
       {modal && (
         <div style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
+          top: '0px',
+          left: '0px',
           width: '100vw',
           height: '100vh',
           background: 'rgba(24,26,36,0.88)',
-          zIndex: 1000,
+          zIndex: '1000',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -478,11 +490,11 @@ const App: React.FC = () => {
           <div style={{
             background: 'linear-gradient(135deg, #181a24 80%, #23253a 100%)',
             border: '2.5px solid #38bdf8',
-            borderRadius: 18,
+            borderRadius: '18px',
             boxShadow: '0 8px 32px #23253a99, 0 2px 8px #fff2',
             color: '#fff',
-            minWidth: 340,
-            maxWidth: 420,
+            minWidth: '340px',
+            maxWidth: '420px',
             padding: '32px 32px 24px 32px',
             fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
             position: 'relative',
@@ -490,13 +502,13 @@ const App: React.FC = () => {
           }}>
             <button onClick={() => setModal(null)} style={{
               position: 'absolute',
-              top: 12,
-              right: 18,
+              top: '12px',
+              right: '18px',
               background: 'none',
               border: 'none',
               color: '#38bdf8',
-              fontSize: 28,
-              fontWeight: 900,
+              fontSize: '28px',
+              fontWeight: '900',
               cursor: 'pointer',
               lineHeight: 1,
               padding: 0,
@@ -649,12 +661,12 @@ const App: React.FC = () => {
         }}
       >
         {/* Theme Switcher Dropdown - upper right */}
-        <div style={{ position: 'absolute', top: 20, right: 28, zIndex: 20 }}>
+        <div style={{ position: 'absolute', top: '20px', right: '28px', zIndex: 20 }}>
           <select
             value={theme}
             onChange={e => setTheme(e.target.value as keyof typeof THEME_PRESETS)}
             className="bg-gray-800 text-white rounded px-3 py-1 border border-gray-600 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
-            style={{ minWidth: 120, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}
+            style={{ minWidth: '120px', color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}
             aria-label="Theme Switcher"
           >
             <option value="Default">Default Theme</option>
@@ -665,15 +677,15 @@ const App: React.FC = () => {
           </select>
         </div>
         {/* VizWiz logo in top-left corner */}
-        <div style={{ position: 'absolute', top: 10, left: 10, fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: 28, fontWeight: 700, letterSpacing: 4, color: themeStyles.color, textShadow: '0 2px 8px #23253a88', padding: '2px 12px' }}>
+        <div style={{ position: 'absolute', top: '10px', left: '10px', fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: '28px', fontWeight: '700', letterSpacing: '4px', color: themeStyles.color, textShadow: '0 2px 8px #23253a88', padding: '2px 12px' }}>
           VizWiz
         </div>
         {/* Visualizer screen with knobs right, buttons left */}
-        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px]" style={{ marginTop: 72 }}>
+        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px]" style={{ marginTop: '72px' }}>
           {/* Left column: UploadPanel above editing option buttons, bottom button aligned with visualizer bottom */}
           <div className="flex flex-col justify-between items-center w-[160px] h-full" style={{ maxHeight: '1350px' }}>
             {/* Top: UploadPanel */}
-            <div className="flex justify-center self-center mx-auto" style={{ width: 140 }}>
+            <div className="flex justify-center self-center mx-auto" style={{ width: '140px' }}>
               <UploadPanel />
             </div>
             {/* Spacer to push buttons to bottom */}
@@ -704,19 +716,154 @@ const App: React.FC = () => {
               <SongInfoConsoleOverlay songName={songName} artistName={artistName} />
             </div>
             {/* Playback controls directly below visualizer */}
-            <div className="w-full flex justify-center items-center mt-1">
+            <div className="w-full flex justify-center items-center mt-3">
               <div className="w-full max-w-[400px] mx-auto">
                 <PlaybackControls ref={audioElementRef} />
               </div>
             </div>
-            {/* Footer controls (SVG black buttons) in a single row, minimal gap */}
-            <div className="w-full flex justify-center items-center mt-2">
-              <div className="flex flex-row gap-2 w-full max-w-[400px] justify-center mx-auto">
+            {/* Footer controls (SVG black buttons) in a single row, with more vertical margin */}
+            <div className="w-full flex justify-center items-center mt-4 mb-2">
+              <div className="flex flex-row gap-3 w-full max-w-[400px] justify-center mx-auto">
                 <ButtonSVG src="/knobs/black-button.svg" label="LOAD" width="90" height="36" />
                 <ButtonSVG src="/knobs/black-button.svg" label="SAVE" width="90" height="36" />
                 <ButtonSVG src="/knobs/black-button.svg" label="PRESET" width="90" height="36" />
                 <ButtonSVG src="/knobs/black-button.svg" label="EXPORT" width="90" height="36" onClick={handleExportClick} />
               </div>
+            </div>
+            {/* Control Button Row - below visualizer, icon buttons, with more vertical margin and centered */}
+            <div style={{ width: '100%', maxWidth: '400px', display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '18px', marginBottom: '2px' }}>
+              {/* Screenshot Button */}
+              <button
+                onClick={() => {
+                  const canvas = visualizerRef.current?.querySelector('canvas') as HTMLCanvasElement | null;
+                  if (canvas) {
+                    const link = document.createElement('a');
+                    link.download = 'visualizer.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                  }
+                }}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+                  border: '2.5px solid #38bdf8',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
+                  color: '#38bdf8',
+                  fontSize: '22px',
+                  fontWeight: '900',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+                }}
+                aria-label="Screenshot (PNG)"
+                title="Screenshot (PNG)"
+                onMouseOver={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #38bdf8 60%, #23253a 100%)';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#23253a';
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 0 #10121a, 0 4px 16px #38bdf866, 0 2px 0 #fff, 0 1px 0 #38bdf8, inset 0 2px 12px #38bdf822';
+                }}
+                onMouseOut={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #23253a 70%, #181a24 100%)';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#38bdf8';
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822';
+                }}
+              >
+                <span style={{ display: 'block', lineHeight: 1 }}>📸</span>
+              </button>
+              {/* Export Video Button (placeholder) */}
+              <button
+                style={{
+                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+                }}
+                aria-label="Export Video (WebM)"
+                title="Export Video (WebM)"
+              >
+                <span style={{ display: 'block', lineHeight: 1 }}>🎥</span>
+              </button>
+              {/* Reset Button (placeholder) */}
+              <button
+                style={{
+                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+                }}
+                aria-label="Reset Visualizer"
+                title="Reset Visualizer"
+              >
+                <span style={{ display: 'block', lineHeight: 1 }}>♻️</span>
+              </button>
+              {/* Randomize Button (placeholder) */}
+              <button
+                style={{
+                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+                }}
+                aria-label="Randomize Visualizer"
+                title="Randomize Visualizer"
+              >
+                <span style={{ display: 'block', lineHeight: 1 }}>🎲</span>
+              </button>
+              {/* Download Preset Button (placeholder) */}
+              <button
+                style={{
+                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+                }}
+                aria-label="Download Preset"
+                title="Download Preset"
+              >
+                <span style={{ display: 'block', lineHeight: 1 }}>💾</span>
+              </button>
+              {/* Upload Preset Button (placeholder) */}
+              <button
+                style={{
+                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+                }}
+                aria-label="Upload Preset"
+                title="Upload Preset"
+              >
+                <span style={{ display: 'block', lineHeight: 1 }}>📂</span>
+              </button>
+              {/* Fullscreen Button - moved here as last button */}
+              <button
+                onClick={handleFullscreen}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+                  border: '2.5px solid #38bdf8',
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
+                  color: '#38bdf8',
+                  fontSize: '22px',
+                  fontWeight: '900',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+                }}
+                aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                onMouseOver={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #38bdf8 60%, #23253a 100%)';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#23253a';
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 0 #10121a, 0 4px 16px #38bdf866, 0 2px 0 #fff, 0 1px 0 #38bdf8, inset 0 2px 12px #38bdf822';
+                }}
+                onMouseOut={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #23253a 70%, #181a24 100%)';
+                  (e.currentTarget as HTMLButtonElement).style.color = '#38bdf8';
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822';
+                }}
+              >
+                {isFullscreen ? (
+                  <span style={{ display: 'block', lineHeight: 1 }}>&#10006;</span>
+                ) : (
+                  <span style={{ display: 'block', lineHeight: 1 }}>&#11036;</span>
+                )}
+              </button>
             </div>
           </div>
           {/* Right column: Knobs grid and VisualizerControls stacked */}
@@ -734,7 +881,7 @@ const App: React.FC = () => {
             </div>
             <div className="w-full max-w-[280px] min-w-[220px] flex justify-center">
               <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg text-base shadow-lg items-stretch"
-                style={{ minWidth: 0, background: themeStyles.background, color: panelTextColor }}>
+                style={{ minWidth: '0', background: themeStyles.background, color: panelTextColor }}>
                 <VisualizerControls background={themeStyles.background} color={panelTextColor} theme={theme} />
               </section>
             </div>

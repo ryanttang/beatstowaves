@@ -103,8 +103,18 @@ const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64, t
       </div>
       {label && (
         <div
-          className="text-base tracking-widest mt-0.5 select-none font-semibold"
-          style={{ color: (theme === 'Valhalla' || theme === 'Default' || theme === 'Serum') ? '#fff' : theme === 'OP-1' ? '#23253a' : '#23253a', letterSpacing: 2 }}
+          className="tracking-widest mt-0.5 select-none font-semibold"
+          style={{
+            color: (theme === 'Valhalla' || theme === 'Default' || theme === 'Serum') ? '#fff' : theme === 'OP-1' ? '#23253a' : '#23253a',
+            letterSpacing: 2,
+            fontSize: '65%', // 35% smaller
+            border: `2px solid ${(theme === 'Valhalla' || theme === 'Default' || theme === 'Serum') ? '#fff' : '#23253a'}`,
+            padding: '2px 8px',
+            borderRadius: '8px',
+            background: 'rgba(0,0,0,0.10)',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
+            display: 'inline-block',
+          }}
         >
           {label}
         </div>
