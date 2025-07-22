@@ -17,10 +17,10 @@ interface ShapePanelProps {
   onClose: () => void;
 }
 
-const ShapePanel: React.FC<ShapePanelProps> = ({ shape, setShape, shapeMorph, setShapeMorph, audioReactiveMorph, setAudioReactiveMorph, audioReactiveColor, setAudioReactiveColor, audioReactiveSize, setAudioReactiveSize, audioBand, setAudioBand, themeStyles, onClose }) => (
+const ShapePanel: React.FC<ShapePanelProps> = ({ shape, setShape, shapeMorph, setShapeMorph, audioReactiveMorph, setAudioReactiveMorph, audioReactiveColor, setAudioReactiveColor, audioReactiveSize, setAudioReactiveSize, audioBand, setAudioBand, themeStyles }) => (
   <div style={{ color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
     <label className="block mb-2 text-white">Shape</label>
-    <select value={shape} onChange={e => setShape(e.target.value)} className="bg-gray-800 text-white rounded p-2">
+    <select value={String(shape)} onChange={e => setShape(e.target.value)} className="bg-gray-800 text-white rounded p-2">
       <option value="box">Box</option>
       <option value="cylinder">Cylinder</option>
       <option value="sphere">Sphere</option>
@@ -30,7 +30,7 @@ const ShapePanel: React.FC<ShapePanelProps> = ({ shape, setShape, shapeMorph, se
     </select>
     <div className="mt-4">
       <label className="block text-white mb-1">Morph</label>
-      <input type="range" min={0} max={1} step={0.01} value={shapeMorph} onChange={e => setShapeMorph(Number(e.target.value))} />
+      <input type="range" min={0} max={1} step={0.01} value={Number(shapeMorph)} onChange={e => setShapeMorph(Number(e.target.value))} />
       <span className="ml-2 text-white">{shapeMorph.toFixed(2)}</span>
     </div>
     <div className="mt-4 flex items-center">
@@ -47,13 +47,12 @@ const ShapePanel: React.FC<ShapePanelProps> = ({ shape, setShape, shapeMorph, se
     </div>
     <div className="mt-4">
       <label className="block text-white mb-1">Audio Band</label>
-      <select value={audioBand} onChange={e => setAudioBand(e.target.value as 'bass' | 'mid' | 'treble')} className="bg-gray-800 text-white rounded p-2">
+      <select value={String(audioBand)} onChange={e => setAudioBand(e.target.value as 'bass' | 'mid' | 'treble')} className="bg-gray-800 text-white rounded p-2">
         <option value="bass">Bass</option>
         <option value="mid">Mid</option>
         <option value="treble">Treble</option>
       </select>
     </div>
-    <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={onClose}>Close</button>
   </div>
 );
 

@@ -11,7 +11,7 @@ interface BackgroundPanelProps {
   onClose: () => void;
 }
 
-const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ background, setBackground, backgroundImage, setBackgroundImage, backgroundAnimation, setBackgroundAnimation, themeStyles, onClose }) => {
+const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ background, setBackground, backgroundImage, setBackgroundImage, backgroundAnimation, setBackgroundAnimation, themeStyles }) => {
   const colorValue = typeof background === 'string' ? background : '#23253a';
   return (
     <div style={{ color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
@@ -39,7 +39,6 @@ const BackgroundPanel: React.FC<BackgroundPanelProps> = ({ background, setBackgr
           <option value="video">Video Background</option>
         </select>
       </div>
-      <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={onClose}>Close</button>
     </div>
   );
 };

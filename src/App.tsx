@@ -384,6 +384,7 @@ const App: React.FC = () => {
         visible={!!editingOption}
         onClose={() => setEditingOption(null)}
         topOffset={180} // aligns with button column
+        themeStyles={themeStyles}
       >
         {editingOption === 'color' && (
           <ColorPanel

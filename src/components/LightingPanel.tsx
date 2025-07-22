@@ -9,17 +9,17 @@ interface LightingPanelProps {
   onClose: () => void;
 }
 
-const LightingPanel: React.FC<LightingPanelProps> = ({ lights, setLights, shadows, setShadows, themeStyles, onClose }) => (
+const LightingPanel: React.FC<LightingPanelProps> = ({ lights, setLights, shadows, setShadows, themeStyles }) => (
   <div style={{ color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
     <label className="block mb-2 text-white">Lights</label>
     {lights.map((light, idx) => (
       <div key={idx} className="mb-2 flex items-center">
-        <input type="color" value={light.color} onChange={e => {
+        <input type="color" value={String(light.color)} onChange={e => {
           const newLights = [...lights];
           newLights[idx].color = e.target.value;
           setLights(newLights);
         }} />
-        <input type="range" min={0.1} max={2} step={0.01} value={light.intensity} onChange={e => {
+        <input type="range" min={0.1} max={2} step={0.01} value={Number(light.intensity)} onChange={e => {
           const newLights = [...lights];
           newLights[idx].intensity = Number(e.target.value);
           setLights(newLights);
@@ -33,7 +33,6 @@ const LightingPanel: React.FC<LightingPanelProps> = ({ lights, setLights, shadow
       <input type="checkbox" checked={shadows} onChange={e => setShadows(e.target.checked)} id="shadows" />
       <label htmlFor="shadows" className="ml-2 text-white">Enable Shadows</label>
     </div>
-    <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={onClose}>Close</button>
   </div>
 );
 
