@@ -9,13 +9,18 @@ import { AudioAnalyzer } from './audio/AudioAnalyzer';
 import Knob from './components/Knob';
 import { ButtonSVG } from './components/KnobSVG';
 import SongInfoConsoleOverlay from './components/SongInfoConsoleOverlay';
-import SidebarPanel from './components/SidebarPanel';
+import SidebarPanelManager from './components/layout/SidebarPanelManager';
 import ColorPanel from './components/ColorPanel';
 import SizePanel from './components/SizePanel';
 import ShapePanel from './components/ShapePanel';
 import CountPanel from './components/CountPanel';
 import LightingPanel from './components/LightingPanel';
 import BackgroundPanel from './components/BackgroundPanel';
+import PlaylistPanel, { PlaylistTrack } from './components/PlaylistPanel';
+import InfoMenu from './components/layout/InfoMenu';
+import MainPanel from './components/layout/MainPanel';
+import KnobGrid from './components/layout/KnobGrid';
+import ControlButtonRow from './components/layout/ControlButtonRow';
 
 const DEFAULT_SEED = 'default-seed-visualizer';
 
@@ -382,194 +387,58 @@ const App: React.FC = () => {
   // Info row visibility state
   const [showInfoRow, setShowInfoRow] = useState(true);
 
+  // Playlist state
+  const [playlist, setPlaylist] = useState<PlaylistTrack[]>([]);
+  const [currentTrack, setCurrentTrack] = useState<number>(-1);
+
+  // Handle upload (add to playlist, max 20)
+  const handleUpload = (files: FileList) => {
+    const newTracks: PlaylistTrack[] = [];
+    for (let i = 0; i < files.length && playlist.length + newTracks.length < 20; i++) {
+      const file = files[i];
+      const url = URL.createObjectURL(file);
+      newTracks.push({ name: file.name, file, url });
+    }
+    setPlaylist(prev => [...prev, ...newTracks]);
+    if (currentTrack === -1 && newTracks.length > 0) setCurrentTrack(playlist.length); // auto-select first
+  };
+
+  // Select a track
+  const handleSelect = (idx: number) => {
+    setCurrentTrack(idx);
+    setIsPlaying(false); // Pause before switching
+    setTimeout(() => setIsPlaying(true), 100); // Play after short delay
+  };
+
+  // Next/Prev track
+  const handleNext = () => {
+    if (playlist.length === 0) return;
+    setCurrentTrack(idx => (idx + 1) % playlist.length);
+    setIsPlaying(false);
+    setTimeout(() => setIsPlaying(true), 100);
+  };
+  const handlePrev = () => {
+    if (playlist.length === 0) return;
+    setCurrentTrack(idx => (idx - 1 + playlist.length) % playlist.length);
+    setIsPlaying(false);
+    setTimeout(() => setIsPlaying(true), 100);
+  };
+
+  // Set audio src when currentTrack changes
+  useEffect(() => {
+    if (audioElementRef.current && currentTrack >= 0 && playlist[currentTrack]) {
+      audioElementRef.current.src = playlist[currentTrack].url;
+      setCanPlay(false);
+    }
+  }, [currentTrack, playlist]);
+
   return (
     <div className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
-      {/* Menu icon for toggling info row */}
-      <button
-        onClick={() => setShowInfoRow(v => !v)}
-        style={{
-          position: 'fixed',
-          top: '18px',
-          left: '18px',
-          zIndex: '1010',
-          background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-          border: '2.5px solid #38bdf8',
-          borderRadius: '10px',
-          width: '44px',
-          height: '44px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '26px',
-          color: '#38bdf8',
-          fontWeight: '900',
-          cursor: 'pointer',
-          boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
-          textShadow: '0 1px 0 #23253a, 0 0px 8px #38bdf888',
-          outline: 'none',
-          transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-        }}
-        aria-label="Toggle info menu"
-        onMouseOver={e => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #38bdf8 60%, #23253a 100%)';
-          (e.currentTarget as HTMLButtonElement).style.color = '#23253a';
-          (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 0 #10121a, 0 4px 16px #38bdf866, 0 2px 0 #fff, 0 1px 0 #38bdf8, inset 0 2px 12px #38bdf822';
-        }}
-        onMouseOut={e => {
-          (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #23253a 70%, #181a24 100%)';
-          (e.currentTarget as HTMLButtonElement).style.color = '#38bdf8';
-          (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822';
-        }}
-      >
-        <span style={{ display: 'block', lineHeight: 1 }}>&#9776;</span>
-      </button>
-      {/* Info buttons row, toggled by menu icon */}
-      {showInfoRow && (
-        <div style={{ width: '100%', display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center', padding: '0px 0 0 0', position: 'relative', zIndex: 10, marginBottom: 24 }}>
-          <button onClick={() => setModal('about')} style={{
-            background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-            color: '#38bdf8',
-            border: '2.5px solid #38bdf8',
-            borderRadius: '8px',
-            padding: '7px 18px',
-            fontSize: '13px',
-            fontWeight: '700',
-            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
-            cursor: 'pointer',
-            boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
-            textShadow: '0 1px 0 #23253a, 0 0px 8px #38bdf888',
-            letterSpacing: '1.2px',
-            transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-          }}>What is VizWiz?</button>
-          <button onClick={() => setModal('howto')} style={{
-            background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-            color: '#e07a3f',
-            border: '2.5px solid #e07a3f',
-            borderRadius: '8px',
-            padding: '7px 18px',
-            fontSize: '13px',
-            fontWeight: '700',
-            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
-            cursor: 'pointer',
-            boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #e07a3f, inset 0 2px 8px #e07a3f22',
-            textShadow: '0 1px 0 #23253a, 0 0px 8px #e07a3f88',
-            letterSpacing: '1.2px',
-            transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-          }}>How to Use</button>
-          <button onClick={() => setModal('faq')} style={{
-            background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-            color: '#a46cff',
-            border: '2.5px solid #a46cff',
-            borderRadius: '8px',
-            padding: '7px 18px',
-            fontSize: '13px',
-            fontWeight: '700',
-            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
-            cursor: 'pointer',
-            boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #a46cff, inset 0 2px 8px #a46cff22',
-            textShadow: '0 1px 0 #23253a, 0 0px 8px #a46cff88',
-            letterSpacing: '1.2px',
-            transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-          }}>FAQ</button>
-        </div>
-      )}
-      {/* Modal overlay */}
-      {modal && (
-        <div style={{
-          position: 'fixed',
-          top: '0px',
-          left: '0px',
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(24,26,36,0.88)',
-          zIndex: '1000',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #181a24 80%, #23253a 100%)',
-            border: '2.5px solid #38bdf8',
-            borderRadius: '18px',
-            boxShadow: '0 8px 32px #23253a99, 0 2px 8px #fff2',
-            color: '#fff',
-            minWidth: '340px',
-            maxWidth: '420px',
-            padding: '32px 32px 24px 32px',
-            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
-            position: 'relative',
-            textAlign: 'left',
-          }}>
-            <button onClick={() => setModal(null)} style={{
-              position: 'absolute',
-              top: '12px',
-              right: '18px',
-              background: 'none',
-              border: 'none',
-              color: '#38bdf8',
-              fontSize: '28px',
-              fontWeight: '900',
-              cursor: 'pointer',
-              lineHeight: 1,
-              padding: 0,
-              textShadow: '0 2px 8px #23253a',
-            }} aria-label="Close modal">×</button>
-            {modal === 'about' && (
-              <>
-                <h2 style={{ color: '#38bdf8', fontSize: 20, marginBottom: 18, letterSpacing: 2, fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"' }}>What is VizWiz?</h2>
-                <div style={{ fontSize: 15, lineHeight: 1.7, color: '#e0e6f0', fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
-                  VizWiz is a next-generation audio visualizer and creative tool. It transforms your music into stunning, interactive 3D graphics using advanced visual modes, customizable effects, and real-time audio analysis. <br /><br />
-                  Designed for musicians, streamers, and creators, VizWiz lets you tweak every aspect of the visuals—from color and shape to lighting and animation—so you can create unique, mesmerizing experiences for your audience.
-                </div>
-                <div style={{ textAlign: 'center', marginTop: 28, fontSize: 13, opacity: 0.7, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
-                  Created by <a href="https://ryantang.site" target="_blank" rel="noopener noreferrer" style={{ color: '#4a90e2', textDecoration: 'underline' }}>Ryan Tang</a>
-                </div>
-              </>
-            )}
-            {modal === 'howto' && (
-              <>
-                <h2 style={{ color: '#e07a3f', fontSize: 20, marginBottom: 18, letterSpacing: 2, fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"' }}>How to Use</h2>
-                <ol style={{ fontSize: 15, color: '#e0e6f0', marginBottom: 18, paddingLeft: 18, lineHeight: 1.7, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
-                  <li><b>1.</b> <b>Load a Track:</b> Click the "Load Track" panel or drag an audio file to start.</li>
-                  <li><b>2.</b> <b>Pick a Visual Mode:</b> Use the dropdown to explore different 3D visualizations.</li>
-                  <li><b>3.</b> <b>Customize:</b> Adjust knobs and buttons to change color, shape, lighting, and effects in real time.</li>
-                </ol>
-                <div style={{ fontSize: 14, color: '#38bdf8', marginBottom: 8, fontWeight: 700, letterSpacing: 1, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>Knob Quick Reference:</div>
-                <ul style={{ fontSize: 13, color: '#e0e6f0', lineHeight: 1.6, paddingLeft: 18, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
-                  <li><b>NOISE</b>: Adds random jitter and organic movement.</li>
-                  <li><b>WOBBLE</b>: Adds smooth, wavy oscillation to the visuals.</li>
-                  <li><b>DISTORT</b>: Warps and exaggerates the shapes for a more intense look.</li>
-                  <li><b>DIGITAL</b>: Makes the animation more blocky and quantized, for a retro digital feel.</li>
-                  <li><b>SPACE</b>: Increases the spread and spacing of the visual elements.</li>
-                  <li><b>MAGNETIC</b>: Pulls elements toward the center, creating a magnetic effect.</li>
-                </ul>
-              </>
-            )}
-            {modal === 'faq' && (
-              <>
-                <h2 style={{ color: '#a46cff', fontSize: 20, marginBottom: 18, letterSpacing: 2, fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"' }}>FAQ</h2>
-                <div style={{ fontSize: 15, lineHeight: 1.7, color: '#e0e6f0', fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
-                  <b>Q: How do I export a video?</b><br />A: Use the Export button below the visualizer.<br /><br />
-                  <b>Q: What file types are supported?</b><br />A: Most common audio formats (mp3, wav, ogg, etc).<br /><br />
-                  <b>Q: Can I use this for streaming?</b><br />A: Yes! VizWiz is designed for creators and streamers.<br /><br />
-                  <span style={{ opacity: 0.7, fontSize: 13 }}>(More questions coming soon...)</span>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-      {/* Top buttons row, centered above the main panel */}
-      {/* Remove any duplicate or persistent info button row rendering. Only keep the one inside {showInfoRow && (...)} after the menu icon. */}
+      <InfoMenu modal={modal} setModal={setModal} showInfoRow={showInfoRow} setShowInfoRow={setShowInfoRow} />
       {/* SidebarPanel for editing options (floating console) */}
-      <SidebarPanel
-        visible={!!editingOption}
-        onClose={() => setEditingOption(null)}
-        topOffset={180} // aligns with button column
-        themeStyles={themeStyles}
-      >
-        {editingOption === 'color' && (
-          <ColorPanel
+      <SidebarPanelManager
+        editingOption={editingOption}
+        setEditingOption={setEditingOption}
             color={color}
             setColor={setColor}
             colorGradient={colorGradient as [string, string]}
@@ -578,12 +447,6 @@ const App: React.FC = () => {
             setColorPalette={setColorPalette}
             colorAnimated={colorAnimated}
             setColorAnimated={setColorAnimated}
-            themeStyles={themeStyles}
-            onClose={() => setEditingOption(null)}
-          />
-        )}
-        {editingOption === 'size' && (
-          <SizePanel
             size={size}
             setSize={setSize}
             sizeX={sizeX}
@@ -594,12 +457,6 @@ const App: React.FC = () => {
             setSizeZ={setSizeZ}
             sizeAudioReactive={sizeAudioReactive}
             setSizeAudioReactive={setSizeAudioReactive}
-            themeStyles={themeStyles}
-            onClose={() => setEditingOption(null)}
-          />
-        )}
-        {editingOption === 'shape' && (
-          <ShapePanel
             shape={shape}
             setShape={setShape}
             shapeMorph={shapeMorph}
@@ -612,301 +469,57 @@ const App: React.FC = () => {
             setAudioReactiveSize={setAudioReactiveSize}
             audioBand={audioBand}
             setAudioBand={setAudioBand}
-            themeStyles={themeStyles}
-            onClose={() => setEditingOption(null)}
-          />
-        )}
-        {editingOption === 'count' && (
-          <CountPanel
             count={count}
             setCount={setCount}
             countAuto={countAuto}
             setCountAuto={setCountAuto}
-            themeStyles={themeStyles}
-            onClose={() => setEditingOption(null)}
-          />
-        )}
-        {editingOption === 'lighting' && (
-          <LightingPanel
             lights={lights.map(l => ({ ...l, position: l.position as [number, number, number] }))}
             setLights={setLights}
             shadows={shadows}
             setShadows={setShadows}
-            themeStyles={themeStyles}
-            onClose={() => setEditingOption(null)}
-          />
-        )}
-        {editingOption === 'background' && (
-          <BackgroundPanel
             background={background}
             setBackground={setBackground}
-            backgroundImage={typeof backgroundImage === 'string' ? backgroundImage : null}
+        backgroundImage={backgroundImage}
             setBackgroundImage={setBackgroundImage}
-            backgroundAnimation={typeof backgroundAnimation === 'string' ? backgroundAnimation : 'none'}
+        backgroundAnimation={backgroundAnimation}
             setBackgroundAnimation={setBackgroundAnimation}
             themeStyles={themeStyles}
-            onClose={() => setEditingOption(null)}
-          />
-        )}
-      </SidebarPanel>
-      <div
-        className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl shadow-2xl relative"
-        style={{
-          background: themeStyles.background,
-          color: themeStyles.color,
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
-          // marginLeft removed for floating console
-          transition: 'margin-left 0.3s',
-        }}
-      >
-        {/* Theme Switcher Dropdown - upper right */}
-        <div style={{ position: 'absolute', top: '20px', right: '28px', zIndex: 20 }}>
-          <select
-            value={theme}
-            onChange={e => setTheme(e.target.value as keyof typeof THEME_PRESETS)}
-            className="bg-gray-800 text-white rounded px-3 py-1 border border-gray-600 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
-            style={{ minWidth: '120px', color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}
-            aria-label="Theme Switcher"
-          >
-            <option value="Default">Default Theme</option>
-            <option value="OP-1">OP-1 Theme</option>
-            <option value="RC-20">RC-20 Theme</option>
-            <option value="Serum">Serum Theme</option>
-            <option value="Valhalla">Valhalla Theme</option>
-          </select>
-        </div>
-        {/* VizWiz logo in top-left corner */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '10px',
-            left: '10px',
-            fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif',
-            fontSize: '28px',
-            fontWeight: '700',
-            letterSpacing: '4px',
-            color: '#23253a', // slightly darker than panel
-            padding: '2px 12px',
-            // Imprint/emboss effect: light top, dark bottom
-            textShadow:
-              '0 2px 0 #fff6,\n' + // light highlight above
-              '0 1px 0 #e6dcc3,\n' + // subtle highlight
-              '0 -2px 2px #0005', // dark shadow below
-            filter: 'contrast(1.1)',
-            opacity: 0.92,
-          }}
-        >
-          VizWiz
-        </div>
-        {/* Visualizer screen with knobs right, buttons left */}
-        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px]" style={{ marginTop: '72px' }}>
-          {/* Left column: UploadPanel above editing option buttons, bottom button aligned with visualizer bottom */}
-          <div className="flex flex-col justify-between items-center w-[160px] h-full" style={{ maxHeight: '1350px' }}>
-            {/* Top: UploadPanel */}
-            <div className="flex justify-center self-center mx-auto" style={{ width: '140px' }}>
-              <UploadPanel />
-            </div>
-            {/* Spacer to push buttons to bottom */}
-            <div className="flex-1" />
-            {/* Bottom: Editing option buttons */}
-            <div className="flex flex-col gap-4 items-center justify-end w-full mb-2">
-              <ButtonSVG src="/knobs/button-orange.svg" label="COLOR" width="140" height="48" onClick={() => setEditingOption('color')} />
-              <ButtonSVG src="/knobs/button-yellow.svg" label="SIZE" width="140" height="48" onClick={() => setEditingOption('size')} />
-              <ButtonSVG src="/knobs/button-lime.svg" label="SHAPE" width="140" height="48" onClick={() => setEditingOption('shape')} />
-              <ButtonSVG src="/knobs/button-lightblue.svg" label="COUNT" width="140" height="48" onClick={() => setEditingOption('count')} />
-              <ButtonSVG src="/knobs/button-blue.svg" label="LIGHTING" width="140" height="48" onClick={() => setEditingOption('lighting')} />
-              <ButtonSVG src="/knobs/button-purple.svg" label="BACKGROUND" width="140" height="48" onClick={() => setEditingOption('background')} />
-            </div>
-          </div>
-          {/* Editing option popovers */}
-          {/* Remove old editing option popovers here, as they are now in SidebarPanel */}
-          {/* Visualizer center */}
-          <div className="flex flex-col items-center w-full justify-center" style={{maxWidth: '400px', aspectRatio: '1080/1350', height: 'auto'}}>
-            <div
-              ref={visualizerRef}
-              id="visualizer-canvas"
-              className="bg-rc20-navy/80 rounded-xl border-4 shadow-2xl flex items-center justify-center"
-              style={{ aspectRatio: '1080 / 1350', width: '100%', maxWidth: '400px', height: 'auto', borderColor: themeStyles.color, position: 'relative' }}
-              aria-label="Visualizer display"
-              role="region"
-            >
-              {/* Song info overlay (console style) INSIDE visualizer */}
-              <SongInfoConsoleOverlay songName={songName} artistName={artistName} />
-            </div>
-            {/* Playback controls directly below visualizer */}
-            <div className="w-full flex justify-center items-center mt-3">
-              <div className="w-full max-w-[400px] mx-auto">
-                <PlaybackControls ref={audioElementRef} />
-              </div>
-            </div>
-            {/* Footer controls (SVG black buttons) in a single row, with more vertical margin */}
-            <div className="w-full flex justify-center items-center mt-4 mb-2">
-              <div className="flex flex-row gap-3 w-full max-w-[400px] justify-center mx-auto">
-                <ButtonSVG src="/knobs/black-button.svg" label="LOAD" width="90" height="36" />
-                <ButtonSVG src="/knobs/black-button.svg" label="SAVE" width="90" height="36" />
-                <ButtonSVG src="/knobs/black-button.svg" label="PRESET" width="90" height="36" />
-                <ButtonSVG src="/knobs/black-button.svg" label="EXPORT" width="90" height="36" onClick={handleExportClick} />
-              </div>
-            </div>
-            {/* Control Button Row - below visualizer, icon buttons, with more vertical margin and centered */}
-            <div style={{ width: '100%', maxWidth: '400px', display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '18px', marginBottom: '2px' }}>
-              {/* Screenshot Button */}
-              <button
-                onClick={() => {
-                  const canvas = visualizerRef.current?.querySelector('canvas') as HTMLCanvasElement | null;
-                  if (canvas) {
-                    const link = document.createElement('a');
-                    link.download = 'visualizer.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                  }
-                }}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-                  border: '2.5px solid #38bdf8',
-                  borderRadius: '10px',
-                  boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
-                  color: '#38bdf8',
-                  fontSize: '22px',
-                  fontWeight: '900',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-                }}
-                aria-label="Screenshot (PNG)"
-                title="Screenshot (PNG)"
-                onMouseOver={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #38bdf8 60%, #23253a 100%)';
-                  (e.currentTarget as HTMLButtonElement).style.color = '#23253a';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 0 #10121a, 0 4px 16px #38bdf866, 0 2px 0 #fff, 0 1px 0 #38bdf8, inset 0 2px 12px #38bdf822';
-                }}
-                onMouseOut={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #23253a 70%, #181a24 100%)';
-                  (e.currentTarget as HTMLButtonElement).style.color = '#38bdf8';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822';
-                }}
-              >
-                <span style={{ display: 'block', lineHeight: 1 }}>📸</span>
-              </button>
-              {/* Export Video Button (placeholder) */}
-              <button
-                style={{
-                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-                }}
-                aria-label="Export Video (WebM)"
-                title="Export Video (WebM)"
-              >
-                <span style={{ display: 'block', lineHeight: 1 }}>🎥</span>
-              </button>
-              {/* Reset Button (placeholder) */}
-              <button
-                style={{
-                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-                }}
-                aria-label="Reset Visualizer"
-                title="Reset Visualizer"
-              >
-                <span style={{ display: 'block', lineHeight: 1 }}>♻️</span>
-              </button>
-              {/* Randomize Button (placeholder) */}
-              <button
-                style={{
-                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-                }}
-                aria-label="Randomize Visualizer"
-                title="Randomize Visualizer"
-              >
-                <span style={{ display: 'block', lineHeight: 1 }}>🎲</span>
-              </button>
-              {/* Download Preset Button (placeholder) */}
-              <button
-                style={{
-                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-                }}
-                aria-label="Download Preset"
-                title="Download Preset"
-              >
-                <span style={{ display: 'block', lineHeight: 1 }}>💾</span>
-              </button>
-              {/* Upload Preset Button (placeholder) */}
-              <button
-                style={{
-                  width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)', border: '2.5px solid #38bdf8', borderRadius: '10px', boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822', color: '#38bdf8', fontSize: '22px', fontWeight: '900', cursor: 'pointer', outline: 'none', transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-                }}
-                aria-label="Upload Preset"
-                title="Upload Preset"
-              >
-                <span style={{ display: 'block', lineHeight: 1 }}>📂</span>
-              </button>
-              {/* Fullscreen Button - moved here as last button */}
-              <button
-                onClick={handleFullscreen}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-                  border: '2.5px solid #38bdf8',
-                  borderRadius: '10px',
-                  boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
-                  color: '#38bdf8',
-                  fontSize: '22px',
-                  fontWeight: '900',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-                }}
-                aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-                title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-                onMouseOver={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #38bdf8 60%, #23253a 100%)';
-                  (e.currentTarget as HTMLButtonElement).style.color = '#23253a';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 6px 0 #10121a, 0 4px 16px #38bdf866, 0 2px 0 #fff, 0 1px 0 #38bdf8, inset 0 2px 12px #38bdf822';
-                }}
-                onMouseOut={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'linear-gradient(180deg, #23253a 70%, #181a24 100%)';
-                  (e.currentTarget as HTMLButtonElement).style.color = '#38bdf8';
-                  (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822';
-                }}
-              >
-                {isFullscreen ? (
-                  <span style={{ display: 'block', lineHeight: 1 }}>&#10006;</span>
-                ) : (
-                  <span style={{ display: 'block', lineHeight: 1 }}>&#11036;</span>
-                )}
-              </button>
-            </div>
-          </div>
-          {/* Right column: Knobs grid and VisualizerControls stacked */}
-          <div className="flex flex-col items-center justify-start gap-4" style={{ maxHeight: '1350px' }}>
-            <div
-              className="grid grid-cols-2 gap-y-6 gap-x-6 items-center mt-0"
-              style={{ maxHeight: '1350px' }}
-            >
-              <Knob value={typeof noise === 'number' ? noise : 0.5} onChange={setNoise} label="NOISE" color="#e07a3f" theme={theme} />
-              <Knob value={typeof wobble === 'number' ? wobble : 0.5} onChange={setWobble} label="WOBBLE" color="#e6c15c" theme={theme} />
-              <Knob value={typeof distort === 'number' ? distort : 0.5} onChange={setDistort} label="DISTORT" color="#4bbf8b" theme={theme} />
-              <Knob value={typeof digital === 'number' ? digital : 0.5} onChange={setDigital} label="DIGITAL" color="#3bb6b0" theme={theme} />
-              <Knob value={typeof space === 'number' ? space : 0.5} onChange={setSpace} label="SPACE" color="#4a90e2" theme={theme} />
-              <Knob value={typeof magnetic === 'number' ? magnetic : 0.5} onChange={setMagnetic} label="MAGNETIC" color="#23253a" theme={theme} />
-            </div>
-            <div className="w-full max-w-[280px] min-w-[220px] flex justify-center">
-              <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg text-base shadow-lg items-stretch"
-                style={{ minWidth: '0', background: themeStyles.background, color: panelTextColor }}>
-                <VisualizerControls background={themeStyles.background} color={panelTextColor} theme={theme} />
-              </section>
-            </div>
-          </div>
-        </div>
-      </div>
+      />
+      {/* Main visualizer, knobs, and controls area modularized into MainPanel */}
+      <MainPanel
+        visualizerRef={visualizerRef as React.RefObject<HTMLDivElement>}
+        engineRef={engineRef}
+        audioElementRef={audioElementRef as React.RefObject<HTMLAudioElement>}
+        playlist={playlist}
+        currentTrack={currentTrack}
+        handleUpload={handleUpload}
+        handleSelect={handleSelect}
+        handleNext={handleNext}
+        handlePrev={handlePrev}
+        noise={noise}
+        setNoise={setNoise}
+        wobble={wobble}
+        setWobble={setWobble}
+        distort={distort}
+        setDistort={setDistort}
+        digital={digital}
+        setDigital={setDigital}
+        space={space}
+        setSpace={setSpace}
+        magnetic={magnetic}
+        setMagnetic={setMagnetic}
+        randomizeAll={randomizeAll}
+        theme={String(theme)}
+        setTheme={setTheme}
+        themeStyles={themeStyles}
+        panelTextColor={String(panelTextColor)}
+        songName={String(songName)}
+        artistName={String(artistName)}
+        isFullscreen={isFullscreen}
+        handleFullscreen={handleFullscreen}
+        handleExportClick={handleExportClick}
+        setEditingOption={setEditingOption}
+      />
     </div>
   );
 };
