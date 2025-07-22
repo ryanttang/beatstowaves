@@ -91,7 +91,7 @@ const ButtonSVG: React.FC<ButtonSVGProps> = ({ src, label, width = 180, height =
       alignItems: 'center',
       justifyContent: 'center',
       fontWeight: 700,
-      fontSize: 20,
+      fontSize: 13,
       color: '#fff',
       letterSpacing: 1.5,
       textShadow: '0 2px 8px #0008',

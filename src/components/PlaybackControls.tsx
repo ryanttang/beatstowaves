@@ -136,15 +136,7 @@ const PlaybackControls = forwardRef<HTMLAudioElement, {}>((props, ref) => {
         >
           {muted || volume === 0 ? <MuteIcon /> : <VolumeIcon />}
         </button>
-        <div className="ml-2 flex items-center">
-          <Knob
-            value={muted ? 0 : volume}
-            onChange={handleVolumeChange}
-            label="VOLUME"
-            color="#e07a3f"
-            size={44}
-          />
-        </div>
+        {/* Removed volume knob for now */}
       </div>
     </div>
   );
