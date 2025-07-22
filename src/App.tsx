@@ -144,10 +144,17 @@ const App: React.FC = () => {
     }
   };
 
+  // Add export handler
+  const handleExportClick = () => {
+    // Simulate click on hidden export button or trigger export logic
+    const event = new CustomEvent('trigger-export');
+    window.dispatchEvent(event);
+  };
+
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
+    <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
       <div
-        className="rc20-panel w-full max-w-4xl p-6 flex flex-col gap-6 items-center rounded-2xl border-4 border-rc20-beige shadow-2xl"
+        className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl border-4 border-rc20-beige shadow-2xl"
         style={{
           background: 'rgba(35, 37, 58, 0.85)', // semi-glassy navy
           backdropFilter: 'blur(8px)',
@@ -155,32 +162,18 @@ const App: React.FC = () => {
         }}
       >
         {/* Top bar */}
-        <header className="flex flex-col md:flex-row items-center justify-between mb-2 w-full gap-2 max-w-[400px] mx-auto">
+        <header className="flex flex-col md:flex-row items-center justify-between mb-1 w-full gap-2 max-w-[400px]">
           <div className="text-2xl font-bold tracking-widest text-rc20-navy drop-shadow-lg">RC-20 AUDIO VISUALIZER</div>
           <div className="text-xs text-rc20-navy opacity-60">Inspired by XLN Audio</div>
         </header>
         {/* UploadPanel - now above visualizer */}
-        <div className="w-full max-w-[400px] mb-2 mx-auto">
+        <div className="w-full max-w-[400px] mb-1 flex justify-center">
           <UploadPanel />
         </div>
-        {/* Controls area: visual mode, intensity, export - compact card (now between upload and visualizer) */}
-        <section
-          className="w-full max-w-[400px] flex flex-col gap-2 p-3 rounded-lg bg-white/10 backdrop-blur-md shadow border border-rc20-beige mx-auto text-sm mb-2"
-        >
-          <div className="flex flex-col gap-2 w-full">
-            <div className="flex-1 min-w-[120px]">
-              <VisualizerControls />
-            </div>
-          </div>
-          <div className="flex flex-row gap-2 w-full justify-end">
-            <RandomizeSeedButton />
-            <ExportPanel />
-          </div>
-        </section>
         {/* Visualizer screen with knobs right, buttons left */}
-        <div className="w-full flex justify-center items-start mb-2 gap-6 max-w-[900px] mx-auto">
+        <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px] ml-12">
           {/* Effect buttons left */}
-          <div className="flex flex-col gap-3 items-center justify-start pt-2" style={{ maxHeight: '1350px' }}>
+          <div className="flex flex-col gap-2 items-center justify-start pt-1" style={{ maxHeight: '1350px' }}>
             <ButtonSVG src="/knobs/button-orange.svg" label="NOISE" width={140} height={48} />
             <ButtonSVG src="/knobs/button-yellow.svg" label="WOBBLE" width={140} height={48} />
             <ButtonSVG src="/knobs/button-lime.svg" label="DISTORT" width={140} height={48} />
@@ -189,7 +182,7 @@ const App: React.FC = () => {
             <ButtonSVG src="/knobs/button-purple.svg" label="MAGNETIC" width={140} height={48} />
           </div>
           {/* Visualizer center */}
-          <div className="flex flex-col items-center w-full" style={{maxWidth: '400px'}}>
+          <div className="flex flex-col items-center w-full justify-center" style={{maxWidth: '400px'}}>
             <div
               ref={visualizerRef}
               id="visualizer-canvas"
@@ -199,29 +192,43 @@ const App: React.FC = () => {
               role="region"
             ></div>
             {/* Playback controls directly below visualizer */}
-            <div className="w-full flex justify-center items-center mt-2">
-              <div className="w-full max-w-[400px]">
+            <div className="w-full flex justify-center items-center mt-1">
+              <div className="w-full max-w-[400px] mx-auto">
                 <PlaybackControls ref={audioElementRef} />
               </div>
             </div>
             {/* Footer controls (SVG black buttons) in a single row, minimal gap */}
-            <div className="w-full flex justify-center items-center mt-3">
-              <div className="flex flex-row gap-2 w-full max-w-[400px] justify-center">
+            <div className="w-full flex justify-center items-center mt-2">
+              <div className="flex flex-row gap-2 w-full max-w-[400px] justify-center mx-auto">
                 <ButtonSVG src="/knobs/black-button.svg" label="LOAD" width={90} height={36} />
                 <ButtonSVG src="/knobs/black-button.svg" label="SAVE" width={90} height={36} />
                 <ButtonSVG src="/knobs/black-button.svg" label="PRESET" width={90} height={36} />
-                <ButtonSVG src="/knobs/black-button.svg" label="SETTINGS" width={90} height={36} />
+                <ButtonSVG src="/knobs/black-button.svg" label="EXPORT" width={90} height={36} onClick={handleExportClick} />
               </div>
             </div>
           </div>
-          {/* Knobs right */}
-          <div className="flex flex-col gap-4 items-center justify-start pt-2 md:grid md:grid-cols-2 md:gap-4 md:items-start md:justify-center" style={{ maxHeight: '1350px', flexWrap: 'wrap' }}>
-            <Knob value={noise} onChange={setNoise} label="NOISE" color="#e07a3f" />
-            <Knob value={wobble} onChange={setWobble} label="WOBBLE" color="#e6c15c" />
-            <Knob value={distort} onChange={setDistort} label="DISTORT" color="#4bbf8b" />
-            <Knob value={digital} onChange={setDigital} label="DIGITAL" color="#3bb6b0" />
-            <Knob value={space} onChange={setSpace} label="SPACE" color="#4a90e2" />
-            <Knob value={magnetic} onChange={setMagnetic} label="MAGNETIC" color="#23253a" />
+          {/* Right column: Knobs grid and VisualizerControls stacked */}
+          <div className="flex flex-col items-center justify-start gap-4" style={{ maxHeight: '1350px' }}>
+            <div
+              className="grid grid-cols-2 gap-y-6 gap-x-6 items-center mt-0"
+              style={{ maxHeight: '1350px' }}
+            >
+              <Knob value={noise} onChange={setNoise} label="NOISE" color="#e07a3f" />
+              <Knob value={wobble} onChange={setWobble} label="WOBBLE" color="#e6c15c" />
+              <Knob value={distort} onChange={setDistort} label="DISTORT" color="#4bbf8b" />
+              <Knob value={digital} onChange={setDigital} label="DIGITAL" color="#3bb6b0" />
+              <Knob value={space} onChange={setSpace} label="SPACE" color="#4a90e2" />
+              <Knob value={magnetic} onChange={setMagnetic} label="MAGNETIC" color="#23253a" />
+            </div>
+            <div className="w-full max-w-[280px] min-w-[220px] flex justify-center">
+              <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg bg-gray-800/80 border border-gray-500 text-base shadow-lg items-stretch"
+                style={{ minWidth: 0 }}>
+                <VisualizerControls />
+                <div className="flex flex-row gap-1 w-full justify-end">
+                  <RandomizeSeedButton />
+                </div>
+              </section>
+            </div>
           </div>
         </div>
       </div>
