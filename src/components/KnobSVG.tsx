@@ -76,10 +76,14 @@ interface ButtonSVGProps {
   label: string;
   width?: number;
   height?: number;
+  onClick?: () => void;
 }
 
-const ButtonSVG: React.FC<ButtonSVGProps> = ({ src, label, width = 180, height = 54 }) => (
-  <div style={{ position: 'relative', width, height, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+const ButtonSVG: React.FC<ButtonSVGProps> = ({ src, label, width = 180, height = 54, onClick }) => (
+  <div
+    style={{ position: 'relative', width, height, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: onClick ? 'pointer' : undefined }}
+    onClick={onClick}
+  >
     <img src={src} width={width} height={height} style={{ display: 'block' }} alt={label + ' button'} />
     <span style={{
       position: 'absolute',
