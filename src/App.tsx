@@ -9,6 +9,13 @@ import { AudioAnalyzer } from './audio/AudioAnalyzer';
 import Knob from './components/Knob';
 import { ButtonSVG } from './components/KnobSVG';
 import SongInfoConsoleOverlay from './components/SongInfoConsoleOverlay';
+import SidebarPanel from './components/SidebarPanel';
+import ColorPanel from './components/ColorPanel';
+import SizePanel from './components/SizePanel';
+import ShapePanel from './components/ShapePanel';
+import CountPanel from './components/CountPanel';
+import LightingPanel from './components/LightingPanel';
+import BackgroundPanel from './components/BackgroundPanel';
 
 const DEFAULT_SEED = 'default-seed-visualizer';
 
@@ -372,6 +379,93 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
+      {/* SidebarPanel for editing options (floating console) */}
+      <SidebarPanel
+        visible={!!editingOption}
+        onClose={() => setEditingOption(null)}
+        topOffset={180} // aligns with button column
+      >
+        {editingOption === 'color' && (
+          <ColorPanel
+            color={color}
+            setColor={setColor}
+            colorGradient={colorGradient as [string, string]}
+            setColorGradient={setColorGradient}
+            colorPalette={colorPalette}
+            setColorPalette={setColorPalette}
+            colorAnimated={colorAnimated}
+            setColorAnimated={setColorAnimated}
+            themeStyles={themeStyles}
+            onClose={() => setEditingOption(null)}
+          />
+        )}
+        {editingOption === 'size' && (
+          <SizePanel
+            size={size}
+            setSize={setSize}
+            sizeX={sizeX}
+            setSizeX={setSizeX}
+            sizeY={sizeY}
+            setSizeY={setSizeY}
+            sizeZ={sizeZ}
+            setSizeZ={setSizeZ}
+            sizeAudioReactive={sizeAudioReactive}
+            setSizeAudioReactive={setSizeAudioReactive}
+            themeStyles={themeStyles}
+            onClose={() => setEditingOption(null)}
+          />
+        )}
+        {editingOption === 'shape' && (
+          <ShapePanel
+            shape={shape}
+            setShape={setShape}
+            shapeMorph={shapeMorph}
+            setShapeMorph={setShapeMorph}
+            audioReactiveMorph={audioReactiveMorph}
+            setAudioReactiveMorph={setAudioReactiveMorph}
+            audioReactiveColor={audioReactiveColor}
+            setAudioReactiveColor={setAudioReactiveColor}
+            audioReactiveSize={audioReactiveSize}
+            setAudioReactiveSize={setAudioReactiveSize}
+            audioBand={audioBand}
+            setAudioBand={setAudioBand}
+            themeStyles={themeStyles}
+            onClose={() => setEditingOption(null)}
+          />
+        )}
+        {editingOption === 'count' && (
+          <CountPanel
+            count={count}
+            setCount={setCount}
+            countAuto={countAuto}
+            setCountAuto={setCountAuto}
+            themeStyles={themeStyles}
+            onClose={() => setEditingOption(null)}
+          />
+        )}
+        {editingOption === 'lighting' && (
+          <LightingPanel
+            lights={lights.map(l => ({ ...l, position: l.position as [number, number, number] }))}
+            setLights={setLights}
+            shadows={shadows}
+            setShadows={setShadows}
+            themeStyles={themeStyles}
+            onClose={() => setEditingOption(null)}
+          />
+        )}
+        {editingOption === 'background' && (
+          <BackgroundPanel
+            background={background}
+            setBackground={setBackground}
+            backgroundImage={typeof backgroundImage === 'string' ? backgroundImage : null}
+            setBackgroundImage={setBackgroundImage}
+            backgroundAnimation={typeof backgroundAnimation === 'string' ? backgroundAnimation : 'none'}
+            setBackgroundAnimation={setBackgroundAnimation}
+            themeStyles={themeStyles}
+            onClose={() => setEditingOption(null)}
+          />
+        )}
+      </SidebarPanel>
       <div
         className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl shadow-2xl relative"
         style={{
@@ -379,6 +473,8 @@ const App: React.FC = () => {
           color: themeStyles.color,
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
+          // marginLeft removed for floating console
+          transition: 'margin-left 0.3s',
         }}
       >
         {/* Theme Switcher Dropdown - upper right */}
@@ -422,158 +518,7 @@ const App: React.FC = () => {
             </div>
           </div>
           {/* Editing option popovers */}
-          {editingOption === 'color' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
-              <label className="block mb-2 text-white">Pick Color</label>
-              <input type="color" value={color} onChange={e => setColor(e.target.value)} />
-              <div className="mt-4">
-                <label className="block text-white mb-1">Gradient</label>
-                <input type="color" value={colorGradient[0]} onChange={e => setColorGradient([e.target.value, colorGradient[1]])} />
-                <input type="color" value={colorGradient[1]} onChange={e => setColorGradient([colorGradient[0], e.target.value])} className="ml-2" />
-              </div>
-              <div className="mt-4">
-                <label className="block text-white mb-1">Palette</label>
-                <select value={colorPalette} onChange={e => setColorPalette(e.target.value)} className="bg-gray-800 text-white rounded p-2">
-                  <option value="default">Default</option>
-                  <option value="warm">Warm</option>
-                  <option value="cool">Cool</option>
-                  <option value="rainbow">Rainbow</option>
-                </select>
-              </div>
-              <div className="mt-4 flex items-center">
-                <input type="checkbox" checked={colorAnimated} onChange={e => setColorAnimated(e.target.checked)} id="color-animated" />
-                <label htmlFor="color-animated" className="ml-2 text-white">Animated Color</label>
-              </div>
-              <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setEditingOption(null)}>Close</button>
-            </div>
-          )}
-          {editingOption === 'size' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
-              <label className="block mb-2 text-white">Master Size</label>
-              <input type="range" min={0.2} max={3} step={0.01} value={size} onChange={e => setSize(Number(e.target.value))} />
-              <span className="ml-2 text-white">{size.toFixed(2)}</span>
-              <div className="mt-4">
-                <label className="block text-white mb-1">X/Y/Z Scaling</label>
-                <input type="range" min={0.2} max={3} step={0.01} value={sizeX} onChange={e => setSizeX(Number(e.target.value))} />
-                <span className="ml-2 text-white">X: {sizeX.toFixed(2)}</span>
-                <input type="range" min={0.2} max={3} step={0.01} value={sizeY} onChange={e => setSizeY(Number(e.target.value))} className="ml-2" />
-                <span className="ml-2 text-white">Y: {sizeY.toFixed(2)}</span>
-                <input type="range" min={0.2} max={3} step={0.01} value={sizeZ} onChange={e => setSizeZ(Number(e.target.value))} className="ml-2" />
-                <span className="ml-2 text-white">Z: {sizeZ.toFixed(2)}</span>
-              </div>
-              <div className="mt-4 flex items-center">
-                <input type="checkbox" checked={sizeAudioReactive} onChange={e => setSizeAudioReactive(e.target.checked)} id="size-audio-reactive" />
-                <label htmlFor="size-audio-reactive" className="ml-2 text-white">Audio-Reactive Size</label>
-              </div>
-              <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setEditingOption(null)}>Close</button>
-            </div>
-          )}
-          {editingOption === 'shape' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
-              <label className="block mb-2 text-white">Shape</label>
-              <select value={shape} onChange={e => setShape(e.target.value)} className="bg-gray-800 text-white rounded p-2">
-                <option value="box">Box</option>
-                <option value="cylinder">Cylinder</option>
-                <option value="sphere">Sphere</option>
-                <option value="torus">Torus</option>
-                <option value="cone">Cone</option>
-                <option value="morph">Morph (multi-shape)</option>
-              </select>
-              <div className="mt-4">
-                <label className="block text-white mb-1">Morph</label>
-                <input type="range" min={0} max={1} step={0.01} value={shapeMorph} onChange={e => setShapeMorph(Number(e.target.value))} />
-                <span className="ml-2 text-white">{shapeMorph.toFixed(2)}</span>
-              </div>
-              <div className="mt-4 flex items-center">
-                <input type="checkbox" checked={audioReactiveMorph} onChange={e => setAudioReactiveMorph(e.target.checked)} id="audio-morph" />
-                <label htmlFor="audio-morph" className="ml-2 text-white">Audio-Reactive Morphing</label>
-              </div>
-              <div className="mt-2 flex items-center">
-                <input type="checkbox" checked={audioReactiveColor} onChange={e => setAudioReactiveColor(e.target.checked)} id="audio-color" />
-                <label htmlFor="audio-color" className="ml-2 text-white">Audio-Reactive Color</label>
-              </div>
-              <div className="mt-2 flex items-center">
-                <input type="checkbox" checked={audioReactiveSize} onChange={e => setAudioReactiveSize(e.target.checked)} id="audio-size" />
-                <label htmlFor="audio-size" className="ml-2 text-white">Audio-Reactive Size</label>
-              </div>
-              <div className="mt-4">
-                <label className="block text-white mb-1">Audio Band</label>
-                <select value={audioBand} onChange={e => setAudioBand(e.target.value as 'bass' | 'mid' | 'treble')} className="bg-gray-800 text-white rounded p-2">
-                  <option value="bass">Bass</option>
-                  <option value="mid">Mid</option>
-                  <option value="treble">Treble</option>
-                </select>
-              </div>
-              <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setEditingOption(null)}>Close</button>
-            </div>
-          )}
-          {editingOption === 'count' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
-              <label className="block mb-2 text-white">Count</label>
-              <input type="range" min={4} max={128} step={1} value={count} onChange={e => setCount(Number(e.target.value))} />
-              <span className="ml-2 text-white">{count}</span>
-              <div className="mt-4 flex items-center">
-                <input type="checkbox" checked={countAuto} onChange={e => setCountAuto(e.target.checked)} id="count-auto" />
-                <label htmlFor="count-auto" className="ml-2 text-white">Auto Count (audio complexity/BPM)</label>
-                <button className="ml-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setCount(Math.floor(Math.random() * 125) + 4)}>Randomize</button>
-              </div>
-              <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setEditingOption(null)}>Close</button>
-            </div>
-          )}
-          {editingOption === 'lighting' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
-              <label className="block mb-2 text-white">Lights</label>
-              {lights.map((light, idx) => (
-                <div key={idx} className="mb-2 flex items-center">
-                  <input type="color" value={light.color} onChange={e => {
-                    const newLights = [...lights];
-                    newLights[idx].color = e.target.value;
-                    setLights(newLights);
-                  }} />
-                  <input type="range" min={0.1} max={2} step={0.01} value={light.intensity} onChange={e => {
-                    const newLights = [...lights];
-                    newLights[idx].intensity = Number(e.target.value);
-                    setLights(newLights);
-                  }} className="ml-2" />
-                  <span className="ml-2 text-white">{light.intensity.toFixed(2)}</span>
-                  <button className="ml-2 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setLights(lights.filter((_, i) => i !== idx))}>Remove</button>
-                </div>
-              ))}
-              <button className="px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setLights([...lights, { color: '#ffffff', intensity: 1, position: [0, 20, 20] }])}>Add Light</button>
-              <div className="mt-4 flex items-center">
-                <input type="checkbox" checked={shadows} onChange={e => setShadows(e.target.checked)} id="shadows" />
-                <label htmlFor="shadows" className="ml-2 text-white">Enable Shadows</label>
-              </div>
-              <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setEditingOption(null)}>Close</button>
-            </div>
-          )}
-          {editingOption === 'background' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
-              <label className="block mb-2 text-white">Background Color</label>
-              <input type="color" value={typeof background === 'string' ? background : '#23253a'} onChange={e => setBackground(e.target.value)} />
-              <div className="mt-4">
-                <label className="block text-white mb-1">Background Image</label>
-                <input type="file" accept="image/*" onChange={e => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = ev => setBackgroundImage(ev.target?.result ? String(ev.target.result) : '');
-                    reader.readAsDataURL(file);
-                  }
-                }} />
-                {backgroundImage && <img src={typeof backgroundImage === 'string' ? backgroundImage : ''} alt="bg" className="mt-2 max-w-xs max-h-32 rounded" />}
-              </div>
-              <div className="mt-4">
-                <label className="block text-white mb-1">Background Animation</label>
-                <select value={typeof backgroundAnimation === 'string' ? backgroundAnimation : 'none'} onChange={e => setBackgroundAnimation(e.target.value)} className="bg-gray-800 text-white rounded p-2">
-                  <option value="none">None</option>
-                  <option value="gradient">Animated Gradient</option>
-                  <option value="video">Video Background</option>
-                </select>
-              </div>
-              <button className="mt-4 px-2 py-1 bg-gray-700 rounded text-white" onClick={() => setEditingOption(null)}>Close</button>
-            </div>
-          )}
+          {/* Remove old editing option popovers here, as they are now in SidebarPanel */}
           {/* Visualizer center */}
           <div className="flex flex-col items-center w-full justify-center" style={{maxWidth: '400px', aspectRatio: '1080/1350', height: 'auto'}}>
             <div
