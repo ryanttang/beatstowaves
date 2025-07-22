@@ -677,7 +677,26 @@ const App: React.FC = () => {
           </select>
         </div>
         {/* VizWiz logo in top-left corner */}
-        <div style={{ position: 'absolute', top: '10px', left: '10px', fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: '28px', fontWeight: '700', letterSpacing: '4px', color: themeStyles.color, textShadow: '0 2px 8px #23253a88', padding: '2px 12px' }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '10px',
+            left: '10px',
+            fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif',
+            fontSize: '28px',
+            fontWeight: '700',
+            letterSpacing: '4px',
+            color: '#23253a', // slightly darker than panel
+            padding: '2px 12px',
+            // Imprint/emboss effect: light top, dark bottom
+            textShadow:
+              '0 2px 0 #fff6,\n' + // light highlight above
+              '0 1px 0 #e6dcc3,\n' + // subtle highlight
+              '0 -2px 2px #0005', // dark shadow below
+            filter: 'contrast(1.1)',
+            opacity: 0.92,
+          }}
+        >
           VizWiz
         </div>
         {/* Visualizer screen with knobs right, buttons left */}
