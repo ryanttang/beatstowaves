@@ -377,8 +377,116 @@ const App: React.FC = () => {
   const songName = audioFile ? audioFile.name.replace(/\.[^/.]+$/, '') : 'Song Title';
   const artistName = audioFile ? 'Unknown Artist' : 'Artist Name';
 
+  // Modal state
+  const [modal, setModal] = useState<null | 'about' | 'howto'>(null);
+
   return (
-    <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
+    <div className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
+      {/* Modal overlay */}
+      {modal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(24,26,36,0.88)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #181a24 80%, #23253a 100%)',
+            border: '2.5px solid #38bdf8',
+            borderRadius: 18,
+            boxShadow: '0 8px 32px #23253a99, 0 2px 8px #fff2',
+            color: '#fff',
+            minWidth: 340,
+            maxWidth: 420,
+            padding: '32px 32px 24px 32px',
+            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
+            position: 'relative',
+            textAlign: 'left',
+          }}>
+            <button onClick={() => setModal(null)} style={{
+              position: 'absolute',
+              top: 12,
+              right: 18,
+              background: 'none',
+              border: 'none',
+              color: '#38bdf8',
+              fontSize: 28,
+              fontWeight: 900,
+              cursor: 'pointer',
+              lineHeight: 1,
+              padding: 0,
+              textShadow: '0 2px 8px #23253a',
+            }} aria-label="Close modal">×</button>
+            {modal === 'about' && (
+              <>
+                <h2 style={{ color: '#38bdf8', fontSize: 20, marginBottom: 18, letterSpacing: 2, fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"' }}>What is VizWiz?</h2>
+                <div style={{ fontSize: 15, lineHeight: 1.7, color: '#e0e6f0', fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
+                  VizWiz is a next-generation audio visualizer and creative tool. It transforms your music into stunning, interactive 3D graphics using advanced visual modes, customizable effects, and real-time audio analysis. <br /><br />
+                  Designed for musicians, streamers, and creators, VizWiz lets you tweak every aspect of the visuals—from color and shape to lighting and animation—so you can create unique, mesmerizing experiences for your audience.
+                </div>
+              </>
+            )}
+            {modal === 'howto' && (
+              <>
+                <h2 style={{ color: '#e07a3f', fontSize: 20, marginBottom: 18, letterSpacing: 2, fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"' }}>How to Use</h2>
+                <ol style={{ fontSize: 15, color: '#e0e6f0', marginBottom: 18, paddingLeft: 18, lineHeight: 1.7, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
+                  <li><b>1.</b> <b>Load a Track:</b> Click the "Load Track" panel or drag an audio file to start.</li>
+                  <li><b>2.</b> <b>Pick a Visual Mode:</b> Use the dropdown to explore different 3D visualizations.</li>
+                  <li><b>3.</b> <b>Customize:</b> Adjust knobs and buttons to change color, shape, lighting, and effects in real time.</li>
+                </ol>
+                <div style={{ fontSize: 14, color: '#38bdf8', marginBottom: 8, fontWeight: 700, letterSpacing: 1, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>Knob Quick Reference:</div>
+                <ul style={{ fontSize: 13, color: '#e0e6f0', lineHeight: 1.6, paddingLeft: 18, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
+                  <li><b>NOISE</b>: Adds random jitter and organic movement.</li>
+                  <li><b>WOBBLE</b>: Adds smooth, wavy oscillation to the visuals.</li>
+                  <li><b>DISTORT</b>: Warps and exaggerates the shapes for a more intense look.</li>
+                  <li><b>DIGITAL</b>: Makes the animation more blocky and quantized, for a retro digital feel.</li>
+                  <li><b>SPACE</b>: Increases the spread and spacing of the visual elements.</li>
+                  <li><b>MAGNETIC</b>: Pulls elements toward the center, creating a magnetic effect.</li>
+                </ul>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Top buttons row, centered above the main panel */}
+      <div style={{ width: '100%', display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center', padding: '24px 0 0 0', position: 'relative', zIndex: 10, marginBottom: 24 }}>
+        <button onClick={() => setModal('about')} style={{
+          background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+          color: '#38bdf8',
+          border: '2.5px solid #38bdf8',
+          borderRadius: 8,
+          padding: '7px 18px',
+          fontSize: 13,
+          fontWeight: 700,
+          fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
+          cursor: 'pointer',
+          boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
+          textShadow: '0 1px 0 #23253a, 0 0px 8px #38bdf888',
+          letterSpacing: 1.2,
+          transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+        }}>What is VizWiz?</button>
+        <button onClick={() => setModal('howto')} style={{
+          background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+          color: '#e07a3f',
+          border: '2.5px solid #e07a3f',
+          borderRadius: 8,
+          padding: '7px 18px',
+          fontSize: 13,
+          fontWeight: 700,
+          fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
+          cursor: 'pointer',
+          boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #e07a3f, inset 0 2px 8px #e07a3f22',
+          textShadow: '0 1px 0 #23253a, 0 0px 8px #e07a3f88',
+          letterSpacing: 1.2,
+          transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+        }}>How to Use</button>
+      </div>
       {/* SidebarPanel for editing options (floating console) */}
       <SidebarPanel
         visible={!!editingOption}
