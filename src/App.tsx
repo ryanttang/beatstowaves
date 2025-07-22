@@ -378,10 +378,89 @@ const App: React.FC = () => {
   const artistName = audioFile ? 'Unknown Artist' : 'Artist Name';
 
   // Modal state
-  const [modal, setModal] = useState<null | 'about' | 'howto'>(null);
+  const [modal, setModal] = useState<null | 'about' | 'howto' | 'faq'>(null);
+  // Info row visibility state
+  const [showInfoRow, setShowInfoRow] = useState(true);
 
   return (
     <div className="min-h-screen min-w-screen flex flex-col items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
+      {/* Menu icon for toggling info row */}
+      <button
+        onClick={() => setShowInfoRow(v => !v)}
+        style={{
+          position: 'fixed',
+          top: 18,
+          left: 18,
+          zIndex: 1010,
+          background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+          border: '2.5px solid #38bdf8',
+          borderRadius: 10,
+          width: 38,
+          height: 38,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 22,
+          color: '#38bdf8',
+          fontWeight: 900,
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px #23253a33',
+          outline: 'none',
+        }}
+        aria-label="Toggle info menu"
+      >
+        &#9776;
+      </button>
+      {/* Info buttons row, toggled by menu icon */}
+      {showInfoRow && (
+        <div style={{ width: '100%', display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center', padding: '0px 0 0 0', position: 'relative', zIndex: 10, marginBottom: 24 }}>
+          <button onClick={() => setModal('about')} style={{
+            background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+            color: '#38bdf8',
+            border: '2.5px solid #38bdf8',
+            borderRadius: 8,
+            padding: '7px 18px',
+            fontSize: 13,
+            fontWeight: 700,
+            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
+            cursor: 'pointer',
+            boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
+            textShadow: '0 1px 0 #23253a, 0 0px 8px #38bdf888',
+            letterSpacing: 1.2,
+            transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+          }}>What is VizWiz?</button>
+          <button onClick={() => setModal('howto')} style={{
+            background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+            color: '#e07a3f',
+            border: '2.5px solid #e07a3f',
+            borderRadius: 8,
+            padding: '7px 18px',
+            fontSize: 13,
+            fontWeight: 700,
+            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
+            cursor: 'pointer',
+            boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #e07a3f, inset 0 2px 8px #e07a3f22',
+            textShadow: '0 1px 0 #23253a, 0 0px 8px #e07a3f88',
+            letterSpacing: 1.2,
+            transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+          }}>How to Use</button>
+          <button onClick={() => setModal('faq')} style={{
+            background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
+            color: '#a46cff',
+            border: '2.5px solid #a46cff',
+            borderRadius: 8,
+            padding: '7px 18px',
+            fontSize: 13,
+            fontWeight: 700,
+            fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
+            cursor: 'pointer',
+            boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #a46cff, inset 0 2px 8px #a46cff22',
+            textShadow: '0 1px 0 #23253a, 0 0px 8px #a46cff88',
+            letterSpacing: 1.2,
+            transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
+          }}>FAQ</button>
+        </div>
+      )}
       {/* Modal overlay */}
       {modal && (
         <div style={{
@@ -430,6 +509,9 @@ const App: React.FC = () => {
                   VizWiz is a next-generation audio visualizer and creative tool. It transforms your music into stunning, interactive 3D graphics using advanced visual modes, customizable effects, and real-time audio analysis. <br /><br />
                   Designed for musicians, streamers, and creators, VizWiz lets you tweak every aspect of the visuals—from color and shape to lighting and animation—so you can create unique, mesmerizing experiences for your audience.
                 </div>
+                <div style={{ textAlign: 'center', marginTop: 28, fontSize: 13, opacity: 0.7, fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
+                  Created by <a href="https://ryantang.site" target="_blank" rel="noopener noreferrer" style={{ color: '#4a90e2', textDecoration: 'underline' }}>Ryan Tang</a>
+                </div>
               </>
             )}
             {modal === 'howto' && (
@@ -451,42 +533,22 @@ const App: React.FC = () => {
                 </ul>
               </>
             )}
+            {modal === 'faq' && (
+              <>
+                <h2 style={{ color: '#a46cff', fontSize: 20, marginBottom: 18, letterSpacing: 2, fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"' }}>FAQ</h2>
+                <div style={{ fontSize: 15, lineHeight: 1.7, color: '#e0e6f0', fontFamily: '"Source Sans Pro", "Inter", "Segoe UI", "Arial", "sans-serif"' }}>
+                  <b>Q: How do I export a video?</b><br />A: Use the Export button below the visualizer.<br /><br />
+                  <b>Q: What file types are supported?</b><br />A: Most common audio formats (mp3, wav, ogg, etc).<br /><br />
+                  <b>Q: Can I use this for streaming?</b><br />A: Yes! VizWiz is designed for creators and streamers.<br /><br />
+                  <span style={{ opacity: 0.7, fontSize: 13 }}>(More questions coming soon...)</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
       {/* Top buttons row, centered above the main panel */}
-      <div style={{ width: '100%', display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center', padding: '24px 0 0 0', position: 'relative', zIndex: 10, marginBottom: 24 }}>
-        <button onClick={() => setModal('about')} style={{
-          background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-          color: '#38bdf8',
-          border: '2.5px solid #38bdf8',
-          borderRadius: 8,
-          padding: '7px 18px',
-          fontSize: 13,
-          fontWeight: 700,
-          fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
-          cursor: 'pointer',
-          boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #38bdf8, inset 0 2px 8px #38bdf822',
-          textShadow: '0 1px 0 #23253a, 0 0px 8px #38bdf888',
-          letterSpacing: 1.2,
-          transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-        }}>What is VizWiz?</button>
-        <button onClick={() => setModal('howto')} style={{
-          background: 'linear-gradient(180deg, #23253a 70%, #181a24 100%)',
-          color: '#e07a3f',
-          border: '2.5px solid #e07a3f',
-          borderRadius: 8,
-          padding: '7px 18px',
-          fontSize: 13,
-          fontWeight: 700,
-          fontFamily: '"Press Start 2P", "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "monospace"',
-          cursor: 'pointer',
-          boxShadow: '0 4px 0 #10121a, 0 2px 12px #23253a66, 0 1.5px 0 #fff, 0 0.5px 0 #e07a3f, inset 0 2px 8px #e07a3f22',
-          textShadow: '0 1px 0 #23253a, 0 0px 8px #e07a3f88',
-          letterSpacing: 1.2,
-          transition: 'background 0.2s, border 0.2s, box-shadow 0.2s',
-        }}>How to Use</button>
-      </div>
+      {/* Remove any duplicate or persistent info button row rendering. Only keep the one inside {showInfoRow && (...)} after the menu icon. */}
       {/* SidebarPanel for editing options (floating console) */}
       <SidebarPanel
         visible={!!editingOption}
