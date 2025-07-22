@@ -1,0 +1,90 @@
+import * as React from 'react';
+
+interface KnobSVGProps {
+  size?: number;
+  className?: string;
+  needleAngle?: number; // degrees
+}
+
+const KnobSVG: React.FC<KnobSVGProps> = ({ size = 64, className = '', needleAngle = 0 }) => {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 484.8 484.8"
+      className={className}
+      style={{ display: 'block' }}
+    >
+      <defs>
+        <linearGradient id="knob-linear-gradient" x1="165.22" y1="319.47" x2="361.07" y2="123.63" gradientTransform="translate(439.8 -73.62) rotate(80.81)" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#e6e6e6" />
+          <stop offset=".04" stopColor="#eaeaea" />
+          <stop offset=".19" stopColor="#f6f6f6" />
+          <stop offset=".41" stopColor="#fdfdfd" />
+          <stop offset="1" stopColor="#fff" />
+        </linearGradient>
+        <filter id="knob-drop-shadow-1" x="0" y="0" width="484.8" height="484.8" filterUnits="userSpaceOnUse">
+          <feOffset dx="-20.76" dy="20.76" />
+          <feGaussianBlur result="blur" stdDeviation="34.6" />
+          <feFlood floodColor="#231f20" floodOpacity=".3" />
+          <feComposite in2="blur" operator="in" />
+          <feComposite in="SourceGraphic" />
+        </filter>
+        <linearGradient id="knob-linear-gradient-2" x1="353.06" y1="131.64" x2="173.24" y2="311.46" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#f2f2f2" />
+          <stop offset=".08" stopColor="#f5f5f5" />
+          <stop offset=".35" stopColor="#fcfcfc" />
+          <stop offset="1" stopColor="#fff" />
+        </linearGradient>
+      </defs>
+      <g id="Layer_2" data-name="Layer 2">
+        <g id="volume">
+          <g>
+            <circle cx="263.15" cy="221.55" r="138.48" fill="url(#knob-linear-gradient)" filter="url(#knob-drop-shadow-1)" />
+            <path d="M390.3,221.55c0,70.22-56.92,127.15-127.15,127.15s-127.15-56.93-127.15-127.15,56.92-127.15,127.15-127.15,127.15,56.92,127.15,127.15Z" fill="url(#knob-linear-gradient-2)" />
+          </g>
+          {/* Indicator needle group, rotates with needleAngle */}
+          <g style={{ transform: `rotate(${needleAngle}deg)`, transformOrigin: '263.15px 221.55px' }}>
+            <rect x="259.15" y="90" width="8" height="70" rx="4" fill="#231f20" />
+            <rect x="259.15" y="90" width="8" height="40" rx="4" fill="#39bb9d" />
+          </g>
+        </g>
+      </g>
+    </svg>
+  );
+};
+
+// New ButtonSVG component for effect buttons
+interface ButtonSVGProps {
+  src: string; // Path to SVG file
+  label: string;
+  width?: number;
+  height?: number;
+}
+
+const ButtonSVG: React.FC<ButtonSVGProps> = ({ src, label, width = 180, height = 54 }) => (
+  <div style={{ position: 'relative', width, height, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <img src={src} width={width} height={height} style={{ display: 'block' }} alt={label + ' button'} />
+    <span style={{
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontWeight: 700,
+      fontSize: 20,
+      color: '#fff',
+      letterSpacing: 1.5,
+      textShadow: '0 2px 8px #0008',
+      pointerEvents: 'none',
+      userSelect: 'none',
+      textTransform: 'uppercase',
+    }}>{label}</span>
+  </div>
+);
+
+export { ButtonSVG };
+export default KnobSVG; 
