@@ -11,6 +11,31 @@ import { ButtonSVG } from './components/KnobSVG';
 
 const DEFAULT_SEED = 'default-seed-visualizer';
 
+const THEME_PRESETS: {
+  [key: string]: {
+    color: string;
+    colorGradient: string[];
+    colorPalette: string;
+    background: string;
+    backgroundAnimation: string;
+  }
+} = {
+  Default: {
+    color: '#4a90e2',
+    colorGradient: ['#4a90e2', '#e07a3f'],
+    colorPalette: 'default',
+    background: '#23253a',
+    backgroundAnimation: 'none',
+  },
+  'OP-1': {
+    color: '#3a3a3a', // dark gray for main accent
+    colorGradient: ['#425b8c', '#e6b85c', '#bfc0c2', '#e25c3f'], // blue, yellow/orange, gray, red (knob colors)
+    colorPalette: 'default',
+    background: '#f3f3f3', // light gray/white
+    backgroundAnimation: 'none',
+  },
+};
+
 const SeedDisplay = () => {
   const seed = useAppStore(s => s.seed);
   return (
@@ -85,12 +110,16 @@ const App: React.FC = () => {
   const [backgroundAnimation, setBackgroundAnimation] = useState('none');
   // Editing option UI state
   const [editingOption, setEditingOption] = useState<string | null>(null);
+  // Remove theme effect on visualizer state
+  // Only use theme for panel UI
+  const [theme, setTheme] = useState<keyof typeof THEME_PRESETS>('Default');
+  const themeStyles = THEME_PRESETS[theme];
 
   // Audio-reactive controls
   const [audioReactiveMorph, setAudioReactiveMorph] = useState(false);
   const [audioReactiveColor, setAudioReactiveColor] = useState(false);
   const [audioReactiveSize, setAudioReactiveSize] = useState(false);
-  const [audioBand, setAudioBand] = useState('bass'); // 'bass', 'mid', 'treble'
+  const [audioBand, setAudioBand] = useState<'bass' | 'mid' | 'treble'>('bass'); // 'bass', 'mid', 'treble'
 
   // Propagate knob values to VisualizerEngine
   useEffect(() => {
@@ -119,6 +148,19 @@ const App: React.FC = () => {
     if (!seed) setSeed(DEFAULT_SEED);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Theme switcher effect
+  useEffect(() => {
+    const preset = THEME_PRESETS[theme];
+    if (preset) {
+      setColor(preset.color);
+      setColorGradient(preset.colorGradient);
+      setColorPalette(preset.colorPalette);
+      setBackground(preset.background);
+      setBackgroundAnimation(preset.backgroundAnimation);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme]);
 
   // Helper to check if the visualizer div has a non-zero size
   const isVisualizerReady = useCallback(() => {
@@ -207,25 +249,52 @@ const App: React.FC = () => {
     window.dispatchEvent(event);
   };
 
+  // Add a helper to determine if a color is light
+  function isColorLight(hex: string) {
+    // Remove hash if present
+    hex = hex.replace('#', '');
+    // Convert 3-digit to 6-digit
+    if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+    const r = parseInt(hex.substr(0,2),16);
+    const g = parseInt(hex.substr(2,2),16);
+    const b = parseInt(hex.substr(4,2),16);
+    // Perceived brightness
+    return (r*0.299 + g*0.587 + b*0.114) > 186;
+  }
+  const panelTextColor = isColorLight(themeStyles.background) ? '#23253a' : '#fff';
+
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
       <div
         className="rc20-panel max-w-4xl p-4 flex flex-col gap-4 items-center justify-center rounded-2xl border-4 border-rc20-beige shadow-2xl relative"
         style={{
-          background: 'rgba(35, 37, 58, 0.85)', // semi-glassy navy
+          background: themeStyles.background,
+          borderColor: themeStyles.color,
+          color: themeStyles.color,
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
         }}
       >
+        {/* Theme Switcher Dropdown - upper right */}
+        <div style={{ position: 'absolute', top: 20, right: 28, zIndex: 20 }}>
+          <select
+            value={theme}
+            onChange={e => setTheme(e.target.value as keyof typeof THEME_PRESETS)}
+            className="bg-gray-800 text-white rounded px-3 py-1 border border-gray-600 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style={{ minWidth: 120, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}
+            aria-label="Theme Switcher"
+          >
+            <option value="Default">Default Theme</option>
+            <option value="OP-1">OP-1 Theme</option>
+          </select>
+        </div>
         {/* VizWiz logo in top-left corner */}
-        <div style={{ position: 'absolute', top: 20, left: 28, fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: 28, fontWeight: 700, letterSpacing: 4, color: '#fff', textShadow: '0 2px 8px #23253a88', padding: '4px 12px' }}>
+        <div style={{ position: 'absolute', top: 20, left: 28, fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: 28, fontWeight: 700, letterSpacing: 4, color: themeStyles.color, textShadow: '0 2px 8px #23253a88', padding: '4px 12px' }}>
           VizWiz
         </div>
-        {/* Top bar */}
-        <header className="flex flex-col md:flex-row items-center justify-between mb-1 w-full gap-2 max-w-[400px]">
-          <div className="text-3xl font-bold tracking-widest text-rc20-navy drop-shadow-lg" style={{ fontFamily: 'Bitcount Prop Double, ui-sans-serif, system-ui, sans-serif' }}>VizWiz</div>
-          <div className="text-xs text-rc20-navy opacity-60">Inspired by XLN Audio</div>
-        </header>
+        <div className="text-xs opacity-60" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', color: themeStyles.color, marginTop: 4 }}>
+          Created by Ryan Tang
+        </div>
         {/* UploadPanel - now above visualizer */}
         <div className="w-full max-w-[400px] mb-1 flex justify-center">
           <UploadPanel />
@@ -243,7 +312,7 @@ const App: React.FC = () => {
           </div>
           {/* Editing option popovers */}
           {editingOption === 'color' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320 }}>
+            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
               <label className="block mb-2 text-white">Pick Color</label>
               <input type="color" value={color} onChange={e => setColor(e.target.value)} />
               <div className="mt-4">
@@ -268,7 +337,7 @@ const App: React.FC = () => {
             </div>
           )}
           {editingOption === 'size' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320 }}>
+            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
               <label className="block mb-2 text-white">Master Size</label>
               <input type="range" min={0.2} max={3} step={0.01} value={size} onChange={e => setSize(Number(e.target.value))} />
               <span className="ml-2 text-white">{size.toFixed(2)}</span>
@@ -289,7 +358,7 @@ const App: React.FC = () => {
             </div>
           )}
           {editingOption === 'shape' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320 }}>
+            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
               <label className="block mb-2 text-white">Shape</label>
               <select value={shape} onChange={e => setShape(e.target.value)} className="bg-gray-800 text-white rounded p-2">
                 <option value="box">Box</option>
@@ -318,7 +387,7 @@ const App: React.FC = () => {
               </div>
               <div className="mt-4">
                 <label className="block text-white mb-1">Audio Band</label>
-                <select value={audioBand} onChange={e => setAudioBand(e.target.value)} className="bg-gray-800 text-white rounded p-2">
+                <select value={audioBand} onChange={e => setAudioBand(e.target.value as 'bass' | 'mid' | 'treble')} className="bg-gray-800 text-white rounded p-2">
                   <option value="bass">Bass</option>
                   <option value="mid">Mid</option>
                   <option value="treble">Treble</option>
@@ -328,7 +397,7 @@ const App: React.FC = () => {
             </div>
           )}
           {editingOption === 'count' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320 }}>
+            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
               <label className="block mb-2 text-white">Count</label>
               <input type="range" min={4} max={128} step={1} value={count} onChange={e => setCount(Number(e.target.value))} />
               <span className="ml-2 text-white">{count}</span>
@@ -341,7 +410,7 @@ const App: React.FC = () => {
             </div>
           )}
           {editingOption === 'lighting' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320 }}>
+            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
               <label className="block mb-2 text-white">Lights</label>
               {lights.map((light, idx) => (
                 <div key={idx} className="mb-2 flex items-center">
@@ -368,7 +437,7 @@ const App: React.FC = () => {
             </div>
           )}
           {editingOption === 'background' && (
-            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320 }}>
+            <div className="fixed top-1/2 left-1/2 z-50 bg-gray-900 p-4 rounded shadow-xl" style={{ transform: 'translate(-50%, -50%)', minWidth: 320, color: themeStyles.color, background: themeStyles.background, borderColor: themeStyles.color }}>
               <label className="block mb-2 text-white">Background Color</label>
               <input type="color" value={background} onChange={e => setBackground(e.target.value)} />
               <div className="mt-4">
@@ -434,11 +503,13 @@ const App: React.FC = () => {
               <Knob value={magnetic} onChange={setMagnetic} label="MAGNETIC" color="#23253a" />
             </div>
             <div className="w-full max-w-[280px] min-w-[220px] flex justify-center">
-              <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg bg-gray-800/80 border border-gray-500 text-base shadow-lg items-stretch"
-                style={{ minWidth: 0 }}>
+              <section className="flex flex-col gap-3 p-2 px-4 py-4 rounded-lg border text-base shadow-lg items-stretch"
+                style={{ minWidth: 0, background: themeStyles.background, color: panelTextColor, borderColor: themeStyles.color }}>
                 <VisualizerControls />
                 <div className="flex flex-row gap-1 w-full justify-end">
-                  <RandomizeSeedButton />
+                  <div style={{ width: '100%' }}>
+                    <RandomizeSeedButton />
+                  </div>
                 </div>
               </section>
             </div>

@@ -100,7 +100,7 @@ const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64 })
         />
       </div>
       {label && (
-        <div className="text-base tracking-widest text-gray-200 mt-0.5 select-none font-semibold" style={{ letterSpacing: 2, textShadow: '0 1px 4px #000, 0 0px 1px #000' }}>{label}</div>
+        <div className="text-base tracking-widest mt-0.5 select-none font-semibold" style={{ color: '#23253a', letterSpacing: 2 }}>{label}</div>
       )}
     </div>
   );

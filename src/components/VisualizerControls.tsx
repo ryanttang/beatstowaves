@@ -34,6 +34,7 @@ export const RandomizeSeedButton: React.FC = () => {
     <button
       className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 w-full md:w-auto"
       onClick={() => setSeed(randomSeed())}
+      style={{ color: '#fff' }}
     >
       Randomize Seed
     </button>
@@ -54,6 +55,7 @@ const VisualizerControls: React.FC = () => {
           className="w-full bg-gray-800 border border-gray-600 rounded p-2"
           value={visualMode}
           onChange={e => setVisualMode(e.target.value as VisualMode)}
+          style={{ color: '#fff' }}
         >
           {modes.map(m => (
             <option key={m.value} value={m.value}>{m.label}</option>
