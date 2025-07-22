@@ -6,6 +6,22 @@ const modes: { label: string; value: VisualMode }[] = [
   { label: 'Bars', value: 'bars' },
   { label: 'Waves', value: 'waves' },
   { label: 'Particles', value: 'particles' },
+  { label: 'Spiral', value: 'spiral' },
+  { label: 'Radial', value: 'radial' },
+  { label: 'Sphere/Globe', value: 'sphere' },
+  { label: 'Tunnel/Wormhole', value: 'tunnel' },
+  { label: 'Grid/Matrix', value: 'grid' },
+  { label: 'Waveform Ribbon', value: 'ribbon' },
+  { label: 'Galaxy/Starfield', value: 'galaxy' },
+  { label: 'Blob', value: 'blob' },
+  { label: 'DNA/Double Helix', value: 'dna' },
+  { label: 'Liquid Drops', value: 'liquid' },
+  { label: 'Orbitals/Atomic', value: 'orbitals' },
+  { label: 'Fractal Tree', value: 'fractal' },
+  { label: 'Polygon Morph', value: 'polygon' },
+  { label: 'Wave Grid', value: 'wavegrid' },
+  { label: 'Text/Logo Deform', value: 'textdeform' },
+  { label: 'Aurora', value: 'aurora' },
 ];
 
 function randomSeed() {

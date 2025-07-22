@@ -54,7 +54,7 @@ const KnobSVG: React.FC<KnobSVGProps> = ({ size = 64, className = '', needleAngl
       <g id="Layer_2" data-name="Layer 2">
         <g id="volume">
           <g>
-            <circle cx="263.15" cy="221.55" r="138.48" fill="url(#knob-linear-gradient)" filter="url(#knob-drop-shadow-1)" />
+            <circle cx="263.15" cy="221.55" r="138.48" fill="url(#knob-linear-gradient)" />
             <path d="M390.3,221.55c0,70.22-56.92,127.15-127.15,127.15s-127.15-56.93-127.15-127.15,56.92-127.15,127.15-127.15,127.15,56.92,127.15,127.15Z" fill="url(#knob-linear-gradient-2)" filter="url(#knob-inner-shadow)" />
             {/* Glass highlight */}
             <ellipse cx="220" cy="170" rx="60" ry="30" fill="url(#knob-glass-highlight)" />

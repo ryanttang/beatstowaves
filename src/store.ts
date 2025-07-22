@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type VisualMode = 'classic' | 'bars' | 'waves' | 'particles';
+export type VisualMode = 'classic' | 'bars' | 'waves' | 'particles' | 'spiral' | 'radial' | 'sphere' | 'tunnel' | 'grid' | 'ribbon' | 'blob' | 'galaxy' | 'dna' | 'liquid' | 'orbitals' | 'fractal' | 'polygon' | 'wavegrid' | 'textdeform' | 'aurora'
 
 interface AppState {
   audioFile: File | null;
