@@ -8,6 +8,7 @@ import { VisualizerEngine } from './engine/VisualizerEngine';
 import { AudioAnalyzer } from './audio/AudioAnalyzer';
 import Knob from './components/Knob';
 import { ButtonSVG } from './components/KnobSVG';
+import SongInfoConsoleOverlay from './components/SongInfoConsoleOverlay';
 
 const DEFAULT_SEED = 'default-seed-visualizer';
 
@@ -365,6 +366,10 @@ const App: React.FC = () => {
     setMagnetic(rand());
   }
 
+  // Song/artist info for overlay
+  const songName = audioFile ? audioFile.name.replace(/\.[^/.]+$/, '') : 'Song Title';
+  const artistName = audioFile ? 'Unknown Artist' : 'Artist Name';
+
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
       <div
@@ -394,26 +399,31 @@ const App: React.FC = () => {
           </select>
         </div>
         {/* VizWiz logo in top-left corner */}
-        <div style={{ position: 'absolute', top: 20, left: 28, fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: 28, fontWeight: 700, letterSpacing: 4, color: themeStyles.color, textShadow: '0 2px 8px #23253a88', padding: '4px 12px' }}>
+        <div style={{ position: 'absolute', top: 10, left: 10, fontFamily: '"Press Start 2P", ui-sans-serif, system-ui, sans-serif', fontSize: 28, fontWeight: 700, letterSpacing: 4, color: themeStyles.color, textShadow: '0 2px 8px #23253a88', padding: '2px 12px' }}>
           VizWiz
         </div>
-        <div className="text-xs opacity-60" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', color: themeStyles.color, marginTop: 4 }}>
+        <div className="text-xs opacity-60" style={{ fontFamily: 'ui-sans-serif, system-ui, sans-serif', color: themeStyles.color, marginTop: 24, marginBottom: 16 }}>
           Created by <a href="https://ryantang.site" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: themeStyles.color }}>Ryan Tang</a>
-        </div>
-        {/* UploadPanel - now above visualizer */}
-        <div className="w-full max-w-[400px] mb-1 flex justify-center">
-          <UploadPanel />
         </div>
         {/* Visualizer screen with knobs right, buttons left */}
         <div className="w-full flex justify-center items-center mb-1 gap-4 max-w-[900px]">
-          {/* Editing option buttons left */}
-          <div className="flex flex-col gap-2 items-center justify-center w-[160px] pt-1" style={{ maxHeight: '1350px' }}>
-            <ButtonSVG src="/knobs/button-orange.svg" label="COLOR" width={140} height={48} onClick={() => setEditingOption('color')} />
-            <ButtonSVG src="/knobs/button-yellow.svg" label="SIZE" width={140} height={48} onClick={() => setEditingOption('size')} />
-            <ButtonSVG src="/knobs/button-lime.svg" label="SHAPE" width={140} height={48} onClick={() => setEditingOption('shape')} />
-            <ButtonSVG src="/knobs/button-lightblue.svg" label="COUNT" width={140} height={48} onClick={() => setEditingOption('count')} />
-            <ButtonSVG src="/knobs/button-blue.svg" label="LIGHTING" width={140} height={48} onClick={() => setEditingOption('lighting')} />
-            <ButtonSVG src="/knobs/button-purple.svg" label="BACKGROUND" width={140} height={48} onClick={() => setEditingOption('background')} />
+          {/* Left column: UploadPanel above editing option buttons, bottom button aligned with visualizer bottom */}
+          <div className="flex flex-col justify-between items-center w-[160px] h-full" style={{ maxHeight: '1350px' }}>
+            {/* Top: UploadPanel */}
+            <div className="flex justify-center self-center mx-auto" style={{ width: 140 }}>
+              <UploadPanel />
+            </div>
+            {/* Spacer to push buttons to bottom */}
+            <div className="flex-1" />
+            {/* Bottom: Editing option buttons */}
+            <div className="flex flex-col gap-4 items-center justify-end w-full mb-2">
+              <ButtonSVG src="/knobs/button-orange.svg" label="COLOR" width={140} height={48} onClick={() => setEditingOption('color')} />
+              <ButtonSVG src="/knobs/button-yellow.svg" label="SIZE" width={140} height={48} onClick={() => setEditingOption('size')} />
+              <ButtonSVG src="/knobs/button-lime.svg" label="SHAPE" width={140} height={48} onClick={() => setEditingOption('shape')} />
+              <ButtonSVG src="/knobs/button-lightblue.svg" label="COUNT" width={140} height={48} onClick={() => setEditingOption('count')} />
+              <ButtonSVG src="/knobs/button-blue.svg" label="LIGHTING" width={140} height={48} onClick={() => setEditingOption('lighting')} />
+              <ButtonSVG src="/knobs/button-purple.svg" label="BACKGROUND" width={140} height={48} onClick={() => setEditingOption('background')} />
+            </div>
           </div>
           {/* Editing option popovers */}
           {editingOption === 'color' && (
@@ -569,15 +579,18 @@ const App: React.FC = () => {
             </div>
           )}
           {/* Visualizer center */}
-          <div className="flex flex-col items-center w-full justify-center" style={{maxWidth: '400px'}}>
+          <div className="flex flex-col items-center w-full justify-center" style={{maxWidth: '400px', aspectRatio: '1080/1350', height: 'auto'}}>
             <div
               ref={visualizerRef}
               id="visualizer-canvas"
               className="bg-rc20-navy/80 rounded-xl border-4 shadow-2xl flex items-center justify-center"
-              style={{ aspectRatio: '1080 / 1350', width: '100%', maxWidth: '400px', height: 'auto', borderColor: themeStyles.color }}
+              style={{ aspectRatio: '1080 / 1350', width: '100%', maxWidth: '400px', height: 'auto', borderColor: themeStyles.color, position: 'relative' }}
               aria-label="Visualizer display"
               role="region"
-            ></div>
+            >
+              {/* Song info overlay (console style) INSIDE visualizer */}
+              <SongInfoConsoleOverlay songName={songName} artistName={artistName} />
+            </div>
             {/* Playback controls directly below visualizer */}
             <div className="w-full flex justify-center items-center mt-1">
               <div className="w-full max-w-[400px] mx-auto">

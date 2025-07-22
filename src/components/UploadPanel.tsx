@@ -40,7 +40,8 @@ const UploadPanel: React.FC = () => {
 
   return (
     <div
-      className="border-2 border-dashed border-gray-500 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-800 transition mb-4"
+      className="border-2 border-dashed border-gray-500 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-800 transition mb-4 flex flex-col justify-center items-center"
+      style={{ width: '100%', height: '100%', minWidth: 80, minHeight: 80 }}
       onClick={() => inputRef.current?.click()}
       onDrop={handleDrop}
       onDragOver={e => e.preventDefault()}
@@ -52,8 +53,10 @@ const UploadPanel: React.FC = () => {
         className="hidden"
         onChange={handleFileChange}
       />
-      <div className="text-lg">Click or drag audio file here</div>
-      {fileName && <div className="mt-2 text-green-400">{fileName}</div>}
+      <div className="text-lg">{fileName ? 'Track Loaded' : 'Load Track'}</div>
+      <div className="mt-1 text-sm italic text-blue-300">Click or drag audio file here</div>
+      {/* Only show file name if not loaded (fileName is null) */}
+      {/* {fileName && <div className="mt-2 text-green-400">{fileName}</div>} */}
       {error && <div className="mt-2 text-red-400">{error}</div>}
     </div>
   );

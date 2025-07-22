@@ -81,7 +81,7 @@ interface ButtonSVGProps {
 
 const ButtonSVG: React.FC<ButtonSVGProps> = ({ src, label, width = 180, height = 54, onClick }) => (
   <div
-    style={{ position: 'relative', width, height, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: onClick ? 'pointer' : undefined }}
+    style={{ position: 'relative', width: `${width}px`, height: `${height}px`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: onClick ? 'pointer' : undefined }}
     onClick={onClick}
   >
     <img src={src} width={width} height={height} style={{ display: 'block' }} alt={label + ' button'} />
