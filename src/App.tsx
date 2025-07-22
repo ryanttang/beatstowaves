@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import UploadPanel from './components/UploadPanel';
-import VisualizerControls from './components/VisualizerControls';
+import VisualizerControls, { RandomizeSeedButton } from './components/VisualizerControls';
 import ExportPanel from './components/ExportPanel';
 import PlaybackControls from './components/PlaybackControls';
 import { useAppStore } from './store';
@@ -14,7 +14,7 @@ const DEFAULT_SEED = 'default-seed-visualizer';
 const SeedDisplay = () => {
   const seed = useAppStore(s => s.seed);
   return (
-    <div className="mt-2 text-xs text-gray-400">Seed: {seed || '—'}</div>
+    <div className="mt-2 text-xs text-gray-400">Seed: {seed || '\u2014'}</div>
   );
 };
 
@@ -145,42 +145,69 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-rc20-navy">
-      <div className="rc20-panel w-full max-w-4xl p-6 flex flex-col gap-4 items-center">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-rc20-navy via-rc20-beige/30 to-rc20-navy/90">
+      <div
+        className="rc20-panel w-full max-w-4xl p-6 flex flex-col gap-6 items-center rounded-2xl border-4 border-rc20-beige shadow-2xl"
+        style={{
+          background: 'rgba(35, 37, 58, 0.85)', // semi-glassy navy
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+        }}
+      >
         {/* Top bar */}
-        <div className="flex items-center justify-between mb-2 w-full">
-          <div className="text-2xl font-bold tracking-widest text-rc20-navy">RC-20 AUDIO VISUALIZER</div>
+        <header className="flex flex-col md:flex-row items-center justify-between mb-2 w-full gap-2">
+          <div className="text-2xl font-bold tracking-widest text-rc20-navy drop-shadow-lg">RC-20 AUDIO VISUALIZER</div>
           <div className="text-xs text-rc20-navy opacity-60">Inspired by XLN Audio</div>
+        </header>
+        {/* UploadPanel - now above visualizer */}
+        <div className="w-full max-w-2xl mb-2">
+          <UploadPanel />
         </div>
-        {/* Visualizer screen */}
-        <div className="flex justify-center w-full mb-4">
-          <div
-            ref={visualizerRef}
-            id="visualizer-canvas"
-            className="w-full max-w-2xl h-56 bg-rc20-navy rounded-xl border-4 border-rc20-beige shadow-lg flex items-center justify-center"
-            style={{ minHeight: '220px' }}
-          ></div>
-        </div>
+        {/* Controls area: visual mode, intensity, export - compact card (now between upload and visualizer) */}
+        <section
+          className="w-full max-w-md flex flex-col gap-2 p-3 rounded-lg bg-white/10 backdrop-blur-md shadow border border-rc20-beige mx-auto text-sm mb-2"
+        >
+          <div className="flex flex-col md:flex-row gap-2 w-full">
+            <div className="flex-1 min-w-[120px]">
+              <VisualizerControls />
+            </div>
+          </div>
+          <div className="flex flex-row gap-2 w-full justify-end">
+            <RandomizeSeedButton />
+            <ExportPanel />
+          </div>
+        </section>
+        {/* Visualizer screen - full width */}
+        <div
+          ref={visualizerRef}
+          id="visualizer-canvas"
+          className="w-full h-56 md:h-72 bg-rc20-navy/80 rounded-xl border-4 border-rc20-beige shadow-2xl flex items-center justify-center mb-4"
+          style={{ minHeight: '220px' }}
+          aria-label="Visualizer display"
+          role="region"
+        ></div>
+        {/* Playback controls */}
+        <PlaybackControls ref={audioElementRef} />
         {/* Effect modules row (SVG buttons, updated to new assets) */}
-        <div className="flex flex-row gap-3 justify-between mb-2 w-full">
+        <section className="flex flex-row flex-wrap gap-3 justify-between w-full">
           <ButtonSVG src="/knobs/button-orange.svg" label="NOISE" />
           <ButtonSVG src="/knobs/button-yellow.svg" label="WOBBLE" />
           <ButtonSVG src="/knobs/button-lime.svg" label="DISTORT" />
           <ButtonSVG src="/knobs/button-lightblue.svg" label="DIGITAL" />
           <ButtonSVG src="/knobs/button-blue.svg" label="SPACE" />
           <ButtonSVG src="/knobs/button-purple.svg" label="MAGNETIC" />
-        </div>
+        </section>
         {/* Knobs row (integrated) */}
-        <div className="flex flex-row gap-8 justify-between items-end py-6">
+        <section className="flex flex-row flex-wrap gap-8 justify-between items-end py-6 w-full">
           <Knob value={noise} onChange={setNoise} label="NOISE" color="#e07a3f" />
           <Knob value={wobble} onChange={setWobble} label="WOBBLE" color="#e6c15c" />
           <Knob value={distort} onChange={setDistort} label="DISTORT" color="#4bbf8b" />
           <Knob value={digital} onChange={setDigital} label="DIGITAL" color="#3bb6b0" />
           <Knob value={space} onChange={setSpace} label="SPACE" color="#4a90e2" />
           <Knob value={magnetic} onChange={setMagnetic} label="MAGNETIC" color="#23253a" />
-        </div>
+        </section>
         {/* Footer controls (SVG black buttons) */}
-        <div className="flex flex-row gap-4 items-center justify-between mt-2">
+        <footer className="flex flex-row flex-wrap gap-4 items-center justify-between w-full mt-2">
           <div className="flex gap-2 items-center">
             <ButtonSVG src="/knobs/black-button.svg" label="LOAD" width={120} height={48} />
             <ButtonSVG src="/knobs/black-button.svg" label="SAVE" width={120} height={48} />
@@ -190,7 +217,7 @@ const App: React.FC = () => {
             <ButtonSVG src="/knobs/black-button.svg" label="PRESET" width={120} height={48} />
             <ButtonSVG src="/knobs/black-button.svg" label="SETTINGS" width={120} height={48} />
           </div>
-        </div>
+        </footer>
       </div>
     </div>
   );

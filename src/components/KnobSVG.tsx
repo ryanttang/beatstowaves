@@ -36,15 +36,31 @@ const KnobSVG: React.FC<KnobSVGProps> = ({ size = 64, className = '', needleAngl
           <stop offset=".35" stopColor="#fcfcfc" />
           <stop offset="1" stopColor="#fff" />
         </linearGradient>
+        {/* Glass highlight */}
+        <radialGradient id="knob-glass-highlight" cx="30%" cy="30%" r="60%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.7" />
+          <stop offset="80%" stopColor="#fff" stopOpacity="0.0" />
+        </radialGradient>
+        {/* Inner shadow */}
+        <filter id="knob-inner-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feOffset dx="0" dy="2" />
+          <feGaussianBlur stdDeviation="8" result="offset-blur" />
+          <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse" />
+          <feFlood floodColor="#000" floodOpacity="0.15" result="color" />
+          <feComposite operator="in" in="color" in2="inverse" result="shadow" />
+          <feComposite operator="over" in="shadow" in2="SourceGraphic" />
+        </filter>
       </defs>
       <g id="Layer_2" data-name="Layer 2">
         <g id="volume">
           <g>
             <circle cx="263.15" cy="221.55" r="138.48" fill="url(#knob-linear-gradient)" filter="url(#knob-drop-shadow-1)" />
-            <path d="M390.3,221.55c0,70.22-56.92,127.15-127.15,127.15s-127.15-56.93-127.15-127.15,56.92-127.15,127.15-127.15,127.15,56.92,127.15,127.15Z" fill="url(#knob-linear-gradient-2)" />
+            <path d="M390.3,221.55c0,70.22-56.92,127.15-127.15,127.15s-127.15-56.93-127.15-127.15,56.92-127.15,127.15-127.15,127.15,56.92,127.15,127.15Z" fill="url(#knob-linear-gradient-2)" filter="url(#knob-inner-shadow)" />
+            {/* Glass highlight */}
+            <ellipse cx="220" cy="170" rx="60" ry="30" fill="url(#knob-glass-highlight)" />
           </g>
           {/* Indicator needle group, rotates with needleAngle */}
-          <g style={{ transform: `rotate(${needleAngle}deg)`, transformOrigin: '263.15px 221.55px' }}>
+          <g style={{ transform: `rotate(${needleAngle}deg)`, transformOrigin: '263.15px 221.55px', transition: 'transform 0.18s cubic-bezier(.4,1.6,.6,1)' }}>
             <rect x="259.15" y="90" width="8" height="70" rx="4" fill="#231f20" />
             <rect x="259.15" y="90" width="8" height="40" rx="4" fill="#39bb9d" />
           </g>

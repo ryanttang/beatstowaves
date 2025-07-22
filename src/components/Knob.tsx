@@ -14,6 +14,7 @@ const clamp = (v: number, min = 0, max = 1) => Math.max(min, Math.min(max, v));
 const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64 }) => {
   const [dragging, setDragging] = useState(false);
   const knobRef = useRef<HTMLDivElement>(null);
+  const [focus, setFocus] = useState(false);
 
   // Angle for indicator: RC-20 style, e.g. -135deg (min) to +135deg (max)
   const minAngle = -135;
@@ -48,20 +49,54 @@ const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64 })
     window.addEventListener('touchend', onUp);
   };
 
+  // Keyboard accessibility: left/right arrows
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+      onChange(clamp(value - 0.05));
+      e.preventDefault();
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+      onChange(clamp(value + 0.05));
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center select-none justify-center" style={{ width: size }}>
+    <div
+      className="flex flex-col items-center select-none justify-center"
+      style={{ width: size }}
+    >
       <div
         ref={knobRef}
-        className="relative flex items-center justify-center"
-        style={{ width: size, height: size, cursor: 'pointer' }}
+        className={`relative flex items-center justify-center transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-rc20-orange ${dragging ? 'ring-4 ring-rc20-orange/40' : ''}`}
+        style={{
+          width: size,
+          height: size,
+          cursor: 'pointer',
+          boxShadow: dragging || focus ? `0 0 0 6px #39bb9d33, 0 2px 16px #0005` : '0 2px 8px #0004',
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.08)',
+          transition: 'box-shadow 0.2s, background 0.2s',
+        }}
+        tabIndex={0}
+        role="slider"
+        aria-valuenow={Math.round(value * 100)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={label || 'Knob'}
         onMouseDown={startDrag}
         onTouchStart={startDrag}
+        onKeyDown={handleKeyDown}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
       >
         <KnobSVG size={size} needleAngle={angle} />
         {/* Knob shadow ring */}
         <div
           className="absolute inset-0 rounded-full pointer-events-none"
-          style={{ boxShadow: dragging ? `0 0 0 4px #39bb9d44` : '0 2px 8px #0004' }}
+          style={{
+            boxShadow: dragging || focus ? `0 0 0 8px #39bb9d44, 0 2px 16px #0005` : '0 2px 8px #0004',
+            transition: 'box-shadow 0.2s',
+          }}
         />
       </div>
       {label && (

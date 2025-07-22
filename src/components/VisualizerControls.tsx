@@ -12,12 +12,23 @@ function randomSeed() {
   return Math.random().toString(36).slice(2, 18);
 }
 
+export const RandomizeSeedButton: React.FC = () => {
+  const setSeed = useAppStore(s => s.setSeed);
+  return (
+    <button
+      className="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600 w-full md:w-auto"
+      onClick={() => setSeed(randomSeed())}
+    >
+      Randomize Seed
+    </button>
+  );
+};
+
 const VisualizerControls: React.FC = () => {
   const visualMode = useAppStore(s => s.visualMode);
   const setVisualMode = useAppStore(s => s.setVisualMode);
   const intensity = useAppStore(s => s.intensity);
   const setIntensity = useAppStore(s => s.setIntensity);
-  const setSeed = useAppStore(s => s.setSeed);
 
   return (
     <div className="space-y-4 mt-4">
@@ -46,12 +57,6 @@ const VisualizerControls: React.FC = () => {
         />
         <div className="text-xs text-gray-400">{intensity.toFixed(2)}</div>
       </div>
-      <button
-        className="w-full px-4 py-2 bg-gray-700 rounded hover:bg-gray-600"
-        onClick={() => setSeed(randomSeed())}
-      >
-        Randomize Seed
-      </button>
     </div>
   );
 };
