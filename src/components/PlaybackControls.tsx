@@ -2,19 +2,7 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } f
 import { useAppStore } from '../store';
 import Knob from './Knob';
 
-// SVG icons for play, pause, and volume
-const PlayIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#23253a"/><polygon points="10,8 22,14 10,20" fill="#fff"/></svg>
-);
-const PauseIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#23253a"/><rect x="10" y="8" width="3" height="12" rx="1.5" fill="#fff"/><rect x="15" y="8" width="3" height="12" rx="1.5" fill="#fff"/></svg>
-);
-const VolumeIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#23253a"/><path d="M10 12v4h3l4 4V8l-4 4h-3z" fill="#fff"/></svg>
-);
-const MuteIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#23253a"/><path d="M10 12v4h3l4 4V8l-4 4h-3z" fill="#fff"/><line x1="9" y1="9" x2="19" y2="19" stroke="#e07a3f" strokeWidth="2.5"/></svg>
-);
+// Remove PlayIcon, PauseIcon, VolumeIcon, MuteIcon components
 
 const PlaybackControls = forwardRef<HTMLAudioElement, {}>((props, ref) => {
   const isPlaying = useAppStore(s => s.isPlaying);
@@ -103,14 +91,35 @@ const PlaybackControls = forwardRef<HTMLAudioElement, {}>((props, ref) => {
         onLoadedMetadata={handleLoadedMetadata}
       />
       <div className="flex items-center gap-4 w-full">
+        {/* Stop Button */}
         <button
-          className="rounded-full p-2 bg-rc20-navy hover:bg-rc20-beige transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-rc20-orange"
+          className="rounded-full w-9 h-9 bg-rc20-navy hover:bg-rc20-beige transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-rc20-orange"
+          onClick={() => {
+            if (audioRef.current) {
+              audioRef.current.currentTime = 0;
+              audioRef.current.pause();
+              setIsPlaying(false);
+              setCurrentTime(0);
+            }
+          }}
+          aria-label="Stop"
+          disabled={!audioFile}
+        >
+          <img src="/knobs/stop-button.svg" alt="Stop" className="w-full h-full object-contain" />
+        </button>
+        {/* Play/Pause Button */}
+        <button
+          className="rounded-full w-9 h-9 bg-rc20-navy hover:bg-rc20-beige transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-rc20-orange"
           onClick={handlePlayPause}
           onKeyDown={handleKeyDown}
           aria-label={isPlaying ? 'Pause' : 'Play'}
           disabled={!audioFile}
         >
-          {isPlaying ? <PauseIcon /> : <PlayIcon />}
+          <img
+            src={isPlaying ? "/knobs/pause-button.svg" : "/knobs/play-button.svg"}
+            alt={isPlaying ? "Pause" : "Play"}
+            className="w-full h-full object-contain"
+          />
         </button>
         <div className="flex-1 flex items-center gap-2">
           <input
@@ -128,15 +137,20 @@ const PlaybackControls = forwardRef<HTMLAudioElement, {}>((props, ref) => {
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
         </div>
+        {/* Volume Button */}
         <button
-          className="rounded-full p-2 bg-rc20-navy hover:bg-rc20-beige transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-rc20-orange"
+          className="rounded-full w-9 h-9 bg-rc20-navy hover:bg-rc20-beige transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-rc20-orange"
           onClick={handleMute}
           aria-label={muted ? 'Unmute' : 'Mute'}
           disabled={!audioFile}
         >
-          {muted || volume === 0 ? <MuteIcon /> : <VolumeIcon />}
+          <img
+            src="/knobs/volume-button.svg"
+            alt={muted || volume === 0 ? 'Muted' : 'Volume'}
+            className="w-full h-full object-contain"
+            style={{ opacity: muted || volume === 0 ? 0.5 : 1 }}
+          />
         </button>
-        {/* Removed volume knob for now */}
       </div>
     </div>
   );

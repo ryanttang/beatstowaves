@@ -14,6 +14,7 @@ const KnobSVG: React.FC<KnobSVGProps> = ({ size = 64, className = '', needleAngl
       viewBox="0 0 484.8 484.8"
       className={className}
       style={{ display: 'block' }}
+      preserveAspectRatio="xMidYMid meet"
     >
       <defs>
         <linearGradient id="knob-linear-gradient" x1="165.22" y1="319.47" x2="361.07" y2="123.63" gradientTransform="translate(439.8 -73.62) rotate(80.81)" gradientUnits="userSpaceOnUse">
@@ -54,15 +55,15 @@ const KnobSVG: React.FC<KnobSVGProps> = ({ size = 64, className = '', needleAngl
       <g id="Layer_2" data-name="Layer 2">
         <g id="volume">
           <g>
-            <circle cx="263.15" cy="221.55" r="138.48" fill="url(#knob-linear-gradient)" />
-            <path d="M390.3,221.55c0,70.22-56.92,127.15-127.15,127.15s-127.15-56.93-127.15-127.15,56.92-127.15,127.15-127.15,127.15,56.92,127.15,127.15Z" fill="url(#knob-linear-gradient-2)" filter="url(#knob-inner-shadow)" />
+            <circle cx="242.4" cy="242.4" r="242.4" fill="url(#knob-linear-gradient)" />
+            <circle cx="242.4" cy="242.4" r="220" fill="url(#knob-linear-gradient-2)" filter="url(#knob-inner-shadow)" />
             {/* Glass highlight */}
-            <ellipse cx="220" cy="170" rx="60" ry="30" fill="url(#knob-glass-highlight)" />
+            <ellipse cx="180" cy="120" rx="90" ry="45" fill="url(#knob-glass-highlight)" />
           </g>
           {/* Indicator needle group, rotates with needleAngle */}
-          <g style={{ transform: `rotate(${needleAngle}deg)`, transformOrigin: '263.15px 221.55px', transition: 'transform 0.18s cubic-bezier(.4,1.6,.6,1)' }}>
-            <rect x="259.15" y="90" width="8" height="70" rx="4" fill="#231f20" />
-            <rect x="259.15" y="90" width="8" height="40" rx="4" fill="#39bb9d" />
+          <g style={{ transform: `rotate(${needleAngle}deg)`, transformOrigin: '242.4px 242.4px', transition: 'transform 0.18s cubic-bezier(.4,1.6,.6,1)' }}>
+            <rect x="238.4" y="20" width="8" height="120" rx="4" fill="#231f20" />
+            <rect x="238.4" y="20" width="8" height="70" rx="4" fill="#39bb9d" />
           </g>
         </g>
       </g>

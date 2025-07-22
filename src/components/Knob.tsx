@@ -77,6 +77,7 @@ const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64, t
           borderRadius: '50%',
           background: 'rgba(255,255,255,0.08)',
           transition: 'box-shadow 0.2s, background 0.2s',
+          overflow: 'hidden',
         }}
         tabIndex={0}
         role="slider"
@@ -90,7 +91,7 @@ const Knob: React.FC<KnobProps> = ({ value, onChange, label, color, size = 64, t
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
       >
-        <KnobSVG size={size} needleAngle={angle} />
+        <KnobSVG size={size} needleAngle={angle} className="absolute inset-0 w-full h-full" />
         {/* Knob shadow ring */}
         <div
           className="absolute inset-0 rounded-full pointer-events-none"
